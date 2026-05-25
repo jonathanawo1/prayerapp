@@ -1,5 +1,5 @@
 name: prayer_walk
-description: Prayer Walk Tracker — cover every road in prayer, together.
+description: PrayerWalk — community prayer walking app for Nottingham and beyond.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -13,7 +13,7 @@ dependencies:
   # Supabase — auth, database, realtime
   supabase_flutter: ^2.3.4
   # Maps
-  google_maps_flutter: ^2.6.1
+  mapbox_maps_flutter: ^2.23.0
   # GPS
   geolocator: ^12.0.0
   # State management
@@ -22,6 +22,14 @@ dependencies:
   flutter_dotenv: ^5.1.0
   # Permissions UI
   permission_handler: ^11.3.1
+  # Connectivity for feed / offline awareness
+  connectivity_plus: ^6.0.3
+  # Premium typography
+  google_fonts: ^6.1.0
+  # Smooth animations
+  flutter_animate: ^4.5.0
+  # Relative timestamps (e.g. "2 hours ago")
+  timeago: ^3.6.1
 
 dev_dependencies:
   flutter_test:

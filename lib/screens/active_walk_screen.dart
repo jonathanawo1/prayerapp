@@ -1,14 +1,16 @@
 import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../core/theme.dart';
-import '../core/map_style.dart';
 import '../models/coordinate.dart';
-import '../providers/auth_provider.dart';
-import '../providers/walks_provider.dart';
+import '../models/walk_draft.dart';
 import '../utils/distance.dart';
+import '../widgets/active_walk_map.dart';
+import 'walk_summary_screen.dart';
 
 class ActiveWalkScreen extends StatefulWidget {
   const ActiveWalkScreen({super.key});
@@ -17,20 +19,51 @@ class ActiveWalkScreen extends StatefulWidget {
   State<ActiveWalkScreen> createState() => _ActiveWalkScreenState();
 }
 
-class _ActiveWalkScreenState extends State<ActiveWalkScreen> {
-  GoogleMapController? _mapController;
+class _ActiveWalkScreenState extends State<ActiveWalkScreen>
+    with SingleTickerProviderStateMixin {
   final List<Coordinate> _path = [];
-  double _distance = 0;
-  int _duration = 0;
-  bool _saving = false;
+  late final DateTime _walkStartedAt;
+  var _distance = 0.0;
+  var _duration = 0;
+  var _paused = false;
+  var _acquiring = true;
   String? _error;
 
   StreamSubscription<Position>? _positionSub;
   Timer? _timer;
 
+  // Pulsing animation for the live indicator
+  late final AnimationController _pulseCtrl;
+
+  LocationSettings _trackingSettings() {
+    if (Platform.isAndroid) {
+      return AndroidSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 6,
+        foregroundNotificationConfig: const ForegroundNotificationConfig(
+          notificationTitle: 'PrayerWalk',
+          notificationText: 'Recording your prayer walk',
+          enableWakeLock: true,
+        ),
+      );
+    }
+    return AppleSettings(
+      accuracy: LocationAccuracy.bestForNavigation,
+      distanceFilter: 6,
+      activityType: ActivityType.fitness,
+      showBackgroundLocationIndicator: true,
+      pauseLocationUpdatesAutomatically: false,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    _walkStartedAt = DateTime.now();
+    _pulseCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
     _startTracking();
   }
 
@@ -38,45 +71,44 @@ class _ActiveWalkScreenState extends State<ActiveWalkScreen> {
   void dispose() {
     _positionSub?.cancel();
     _timer?.cancel();
-    _mapController?.dispose();
+    _pulseCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _startTracking() async {
-    LocationPermission perm = await Geolocator.checkPermission();
+    var perm = await Geolocator.checkPermission();
     if (perm == LocationPermission.denied) {
       perm = await Geolocator.requestPermission();
     }
     if (perm == LocationPermission.deniedForever) {
-      setState(() => _error = 'Location permission denied. Enable it in settings.');
+      setState(() => _error =
+          'Location access denied. Enable GPS for PrayerWalk in Settings.');
+      return;
+    }
+    if (!await Geolocator.isLocationServiceEnabled()) {
+      setState(() => _error = 'Location services are turned off.');
       return;
     }
 
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (mounted) setState(() => _duration++);
+      if (mounted && !_paused) setState(() => _duration++);
     });
 
     _positionSub = Geolocator.getPositionStream(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.bestForNavigation,
-        distanceFilter: 5,
-      ),
+      locationSettings: _trackingSettings(),
     ).listen((pos) {
-      if (!mounted) return;
+      if (!mounted || _paused) return;
       final coord = Coordinate(
         latitude: pos.latitude,
         longitude: pos.longitude,
       );
       setState(() {
+        if (_acquiring) _acquiring = false;
         _path.add(coord);
         if (_path.length > 1) {
           _distance = totalPathDistance(_path);
         }
       });
-
-      _mapController?.animateCamera(
-        CameraUpdate.newLatLng(coord.toLatLng()),
-      );
     });
   }
 
@@ -85,11 +117,18 @@ class _ActiveWalkScreenState extends State<ActiveWalkScreen> {
     _timer?.cancel();
   }
 
+  void _togglePause() {
+    setState(() => _paused = !_paused);
+  }
+
   Future<void> _endWalk() async {
     if (_path.length < 2) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Walk a bit more before ending.'),
+        SnackBar(
+          content: Text(
+            'Walk a little further to record your route.',
+            style: GoogleFonts.dmSans(),
+          ),
           backgroundColor: AppColors.warning,
         ),
       );
@@ -98,58 +137,62 @@ class _ActiveWalkScreenState extends State<ActiveWalkScreen> {
 
     final confirm = await showDialog<bool>(
       context: context,
+      barrierColor: Colors.black87,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'End Prayer Walk?',
-          style: TextStyle(color: AppColors.textPrimary),
-        ),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20)),
+        title: Text('Finish walk?',
+            style: GoogleFonts.dmSans(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+                fontSize: 18)),
         content: Text(
-          'Distance: ${formatDistance(_distance)}\n'
-          'Duration: ${formatDuration(_duration)}\n\n'
-          'Your walk will be saved to the global map.',
-          style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
+          '${formatDistance(_distance)} · ${formatDuration(_duration)}\n\n'
+          'Save this walk to your prayer community.',
+          style: GoogleFonts.dmSans(
+              color: AppColors.textSecondary, height: 1.5, fontSize: 14),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Keep Walking',
-                style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Keep walking',
+                style: GoogleFonts.dmSans(color: AppColors.textMuted)),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.danger,
+              backgroundColor: AppColors.success,
               minimumSize: Size.zero,
               padding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
             ),
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('End & Save'),
+            child: Text('Finish',
+                style: GoogleFonts.dmSans(fontWeight: FontWeight.w700)),
           ),
         ],
       ),
     );
 
-    if (confirm != true) return;
+    if (confirm != true || !mounted) return;
+
     _stopTracking();
 
-    setState(() => _saving = true);
-    try {
-      final userId = context.read<AuthProvider>().userId!;
-      await context.read<WalksProvider>().saveWalk(
-            userId: userId,
-            path: List.from(_path),
-            distance: _distance,
-            duration: _duration,
-          );
-      if (mounted) Navigator.pop(context);
-    } catch (e) {
-      setState(() {
-        _saving = false;
-        _error = 'Failed to save walk: $e';
-      });
-    }
+    final draft = WalkDraft(
+      path: List.from(_path),
+      distance: _distance,
+      duration: _duration,
+      startTime: _walkStartedAt,
+      endTime: DateTime.now(),
+    );
+
+    // Replace this screen with the summary screen so Back goes to HomeShell
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => WalkSummaryScreen(draft: draft)),
+    );
   }
 
   void _cancelWalk() {
@@ -157,174 +200,150 @@ class _ActiveWalkScreenState extends State<ActiveWalkScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         backgroundColor: AppColors.surface,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text('Cancel Walk?',
-            style: TextStyle(color: AppColors.textPrimary)),
-        content: const Text('Your current walk will be discarded.',
-            style: TextStyle(color: AppColors.textSecondary)),
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20)),
+        title: Text('Discard walk?',
+            style: GoogleFonts.dmSans(
+                color: AppColors.textPrimary, fontWeight: FontWeight.w700)),
+        content: Text('Your route will not be saved.',
+            style: GoogleFonts.dmSans(
+                color: AppColors.textSecondary, fontSize: 14)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Keep Walking',
-                style: TextStyle(color: AppColors.textMuted)),
+            child: Text('Keep recording',
+                style: GoogleFonts.dmSans(color: AppColors.textMuted)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Discard',
-                style: TextStyle(color: AppColors.danger)),
+            child: Text('Discard',
+                style: GoogleFonts.dmSans(color: AppColors.danger)),
           ),
         ],
       ),
     ).then((confirmed) {
       if (confirmed == true) {
         _stopTracking();
-        Navigator.pop(context);
+        if (mounted) Navigator.pop(context);
       }
     });
   }
 
-  Set<Polyline> get _polylines {
-    if (_path.length < 2) return {};
-    return {
-      Polyline(
-        polylineId: const PolylineId('active'),
-        points: _path.map((c) => c.toLatLng()).toList(),
-        color: const Color(0xFF818CF8),
-        width: 5,
-        jointType: JointType.round,
-        endCap: Cap.roundCap,
-        startCap: Cap.roundCap,
-      ),
-    };
-  }
-
   @override
   Widget build(BuildContext context) {
-    final hasLocation = _path.isNotEmpty;
-
     return Scaffold(
       body: Stack(
         children: [
-          // ── Map ──────────────────────────────────────────
-          if (!hasLocation)
-            const Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircularProgressIndicator(color: AppColors.primary),
-                  SizedBox(height: 16),
-                  Text('Acquiring GPS signal…',
-                      style: TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700)),
-                  SizedBox(height: 8),
-                  Text('Go outside for best accuracy',
-                      style: TextStyle(color: AppColors.textMuted)),
-                ],
-              ),
-            )
-          else
-            GoogleMap(
-              onMapCreated: (c) {
-                _mapController = c;
-                c.setMapStyle(darkMapStyle);
-              },
-              initialCameraPosition: CameraPosition(
-                target: _path.first.toLatLng(),
-                zoom: 17,
-              ),
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: false,
-              compassEnabled: false,
-              polylines: _polylines,
-            ),
+          // ── Map ───────────────────────────────────────────────
+          Positioned.fill(child: ActiveWalkMap(path: _path)),
 
-          // ── LIVE badge ───────────────────────────────────
-          if (hasLocation)
-            Positioned(
-              top: 100,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 14, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: AppColors.background.withOpacity(0.88),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: AppColors.danger.withOpacity(0.4)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: const BoxDecoration(
-                          color: AppColors.danger,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Text(
-                        'RECORDING',
-                        style: TextStyle(
-                          color: AppColors.danger,
-                          fontSize: 12,
+          // ── Acquiring overlay ─────────────────────────────────
+          if (_acquiring && _error == null)
+            Positioned.fill(
+              child: ColoredBox(
+                color: AppColors.background.withOpacity(0.92),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CircularProgressIndicator(
+                        color: AppColors.primary),
+                    const SizedBox(height: 20),
+                    Text('Acquiring GPS…',
+                        style: GoogleFonts.dmSans(
+                          color: AppColors.textPrimary,
+                          fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: 1,
-                        ),
-                      ),
-                    ],
-                  ),
+                        )),
+                    const SizedBox(height: 6),
+                    Text('Move outdoors for best accuracy',
+                        style: GoogleFonts.dmSans(
+                            color: AppColors.textMuted, fontSize: 14)),
+                  ],
                 ),
               ),
             ),
 
-          // ── Top nav ──────────────────────────────────────
+          // ── Error ─────────────────────────────────────────────
+          if (_error != null)
+            Positioned(
+              top: 100,
+              left: 16,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: AppColors.danger.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
+                  border:
+                      Border.all(color: AppColors.danger.withOpacity(0.35)),
+                ),
+                child: Text(_error!,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.dmSans(
+                        color: AppColors.danger, fontSize: 14)),
+              ),
+            ),
+
+          // ── Top bar ───────────────────────────────────────────
           Positioned(
             top: 0,
             left: 0,
             right: 0,
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: Row(
                   children: [
-                    GestureDetector(
+                    _CircleButton(
+                      icon: Icons.close,
                       onTap: _cancelWalk,
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.background.withOpacity(0.88),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: AppColors.border),
-                        ),
-                        child: const Icon(Icons.close,
-                            color: AppColors.textSecondary, size: 18),
-                      ),
                     ),
                     const Spacer(),
-                    const Text(
-                      'Prayer Walk',
-                      style: TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        shadows: [
-                          Shadow(
-                              color: Colors.black54,
-                              blurRadius: 4,
-                              offset: Offset(0, 1))
-                        ],
+                    // Live indicator
+                    if (!_acquiring && _error == null)
+                      AnimatedBuilder(
+                        animation: _pulseCtrl,
+                        builder: (_, __) => Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: AppColors.background.withOpacity(0.88),
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: AppColors.danger
+                                    .withOpacity(0.4 * _pulseCtrl.value + 0.2)),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 8,
+                                height: 8,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: _paused
+                                      ? AppColors.warning
+                                      : AppColors.danger.withOpacity(
+                                          0.5 + 0.5 * _pulseCtrl.value),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Text(
+                                _paused ? 'PAUSED' : 'RECORDING',
+                                style: GoogleFonts.dmSans(
+                                  color: _paused
+                                      ? AppColors.warning
+                                      : AppColors.danger,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
                     const Spacer(),
                     const SizedBox(width: 40),
                   ],
@@ -333,104 +352,107 @@ class _ActiveWalkScreenState extends State<ActiveWalkScreen> {
             ),
           ),
 
-          // ── Error banner ─────────────────────────────────
-          if (_error != null)
-            Positioned(
-              top: 100,
-              left: 16,
-              right: 16,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.danger.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(12),
-                  border:
-                      Border.all(color: AppColors.danger.withOpacity(0.3)),
-                ),
-                child: Text(_error!,
-                    textAlign: TextAlign.center,
-                    style:
-                        const TextStyle(color: AppColors.danger, fontSize: 14)),
-              ),
-            ),
-
-          // ── Stats bar ────────────────────────────────────
+          // ── Stats panel ───────────────────────────────────────
           Positioned(
-            bottom: 110,
+            bottom: 122,
             left: 16,
             right: 16,
             child: Container(
-              padding: const EdgeInsets.symmetric(
-                  vertical: 18, horizontal: 24),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
               decoration: BoxDecoration(
-                color: AppColors.background.withOpacity(0.92),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.surface),
-              ),
-              child: Row(
-                children: [
-                  _WalkStat(
-                    value: formatDuration(_duration),
-                    label: 'Duration',
-                  ),
-                  const _Divider(),
-                  _WalkStat(
-                    value: formatDistance(_distance),
-                    label: 'Distance',
-                  ),
-                  const _Divider(),
-                  _WalkStat(
-                    value: formatPace(_distance, _duration),
-                    label: 'Pace',
+                color: AppColors.background.withOpacity(0.93),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: AppColors.border),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.3),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
+              child: Row(
+                children: [
+                  _WalkStat(value: formatDuration(_duration), label: 'Time'),
+                  _Divider(),
+                  _WalkStat(
+                      value: formatDistance(_distance),
+                      label: 'Distance'),
+                  _Divider(),
+                  _WalkStat(
+                      value: formatPace(_distance, _duration),
+                      label: 'Pace'),
+                ],
+              ),
             ),
-          ),
+          )
+              .animate()
+              .fadeIn(delay: 300.ms, duration: 400.ms)
+              .slideY(begin: 0.1),
 
-          // ── End button ───────────────────────────────────
+          // ── Bottom actions ────────────────────────────────────
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-                child: SizedBox(
-                  height: 58,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.danger,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18),
+                padding:
+                    const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Row(
+                  children: [
+                    // Pause / resume
+                    GestureDetector(
+                      onTap: _togglePause,
+                      child: Container(
+                        width: 58,
+                        height: 58,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.circular(18),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Icon(
+                          _paused
+                              ? Icons.play_arrow_rounded
+                              : Icons.pause_rounded,
+                          color: AppColors.textPrimary,
+                          size: 28,
+                        ),
                       ),
-                      elevation: 8,
-                      shadowColor: AppColors.danger.withOpacity(0.4),
                     ),
-                    onPressed: _saving ? null : _endWalk,
-                    child: _saving
-                        ? const Row(
+                    const SizedBox(width: 12),
+                    // End walk
+                    Expanded(
+                      child: SizedBox(
+                        height: 58,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.danger,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18)),
+                            elevation: 8,
+                            shadowColor:
+                                AppColors.danger.withOpacity(0.4),
+                          ),
+                          onPressed: _endWalk,
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: Colors.white),
-                              ),
-                              SizedBox(width: 12),
-                              Text('Saving…',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w800)),
+                              const Icon(Icons.stop_rounded, size: 22),
+                              const SizedBox(width: 8),
+                              Text('End Walk',
+                                  style: GoogleFonts.dmSans(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  )),
                             ],
-                          )
-                        : const Text(
-                            'End Prayer Walk',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w800),
                           ),
-                  ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -439,6 +461,27 @@ class _ActiveWalkScreenState extends State<ActiveWalkScreen> {
       ),
     );
   }
+}
+
+class _CircleButton extends StatelessWidget {
+  const _CircleButton({required this.icon, required this.onTap});
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: BoxDecoration(
+            color: AppColors.background.withOpacity(0.88),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: Icon(icon, color: AppColors.textSecondary, size: 18),
+        ),
+      );
 }
 
 class _WalkStat extends StatelessWidget {
@@ -452,7 +495,7 @@ class _WalkStat extends StatelessWidget {
           children: [
             Text(
               value,
-              style: const TextStyle(
+              style: GoogleFonts.dmSans(
                 fontSize: 20,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -462,7 +505,7 @@ class _WalkStat extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               label,
-              style: const TextStyle(
+              style: GoogleFonts.dmSans(
                 fontSize: 11,
                 color: AppColors.textMuted,
                 fontWeight: FontWeight.w600,
@@ -475,12 +518,10 @@ class _WalkStat extends StatelessWidget {
 }
 
 class _Divider extends StatelessWidget {
-  const _Divider();
-
   @override
   Widget build(BuildContext context) => Container(
         width: 1,
         height: 36,
-        color: AppColors.surface,
+        color: AppColors.border,
       );
 }

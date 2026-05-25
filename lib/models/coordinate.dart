@@ -1,4 +1,4 @@
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class Coordinate {
   final double latitude;
@@ -16,7 +16,7 @@ class Coordinate {
         'longitude': longitude,
       };
 
-  LatLng toLatLng() => LatLng(latitude, longitude);
+  Position toPosition() => Position(longitude, latitude);
 
   @override
   String toString() => 'Coordinate($latitude, $longitude)';

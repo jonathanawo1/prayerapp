@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>$(DEVELOPMENT_LANGUAGE)</string>
     <key>CFBundleDisplayName</key>
-    <string>Prayer Walk</string>
+    <string>PrayerWalk</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -42,17 +42,17 @@
     <key>UIViewControllerBasedStatusBarAppearance</key>
     <false/>
 
-    <!-- Location permissions -->
     <key>NSLocationWhenInUseUsageDescription</key>
-    <string>Prayer Walk uses your location to track your prayer walk route on the map.</string>
+    <string>PrayerWalk needs your location to record your prayer walk route.</string>
     <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-    <string>Prayer Walk uses your location to track your prayer walk route, even in the background.</string>
+    <string>Location is used while you are recording a walk, including briefly in the background.</string>
     <key>NSLocationAlwaysUsageDescription</key>
-    <string>Prayer Walk uses your location to track your prayer walk route in the background.</string>
+    <string>Location is used while you are recording a walk, including briefly in the background.</string>
 
-    <!-- Google Maps API Key — replace YOUR_IOS_GOOGLE_MAPS_API_KEY -->
-    <key>GMSApiKey</key>
-    <string>YOUR_IOS_GOOGLE_MAPS_API_KEY</string>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>location</string>
+    </array>
 
     <key>CADisableMinimumFrameDurationOnPhone</key>
     <true/>
