@@ -3,7 +3,7 @@
 
 import Foundation
 
-struct Group: Codable, Identifiable {
+struct PrayerGroup: Codable, Identifiable {
     let id: String
     let name: String
     let description: String

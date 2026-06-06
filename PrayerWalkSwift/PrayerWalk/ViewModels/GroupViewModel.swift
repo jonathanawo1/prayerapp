@@ -5,7 +5,7 @@ import Foundation
 
 @MainActor
 final class GroupViewModel: ObservableObject {
-    @Published var group: Group?
+    @Published var group: PrayerGroup?
     @Published var members: [Profile] = []
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
