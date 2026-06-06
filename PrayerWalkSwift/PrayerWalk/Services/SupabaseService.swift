@@ -256,29 +256,29 @@ final class SupabaseService: ObservableObject {
 
     // MARK: - Groups
 
-    func groupFetch(id: String) async throws -> Group? {
-        let groups = try await fetch([Group].self, path: "groups", queryItems: [
+    func groupFetch(id: String) async throws -> PrayerGroup? {
+        let groups = try await fetch([PrayerGroup].self, path: "groups", queryItems: [
             URLQueryItem(name: "id", value: "eq.\(id)"),
             URLQueryItem(name: "limit", value: "1")
         ])
         return groups.first
     }
 
-    func groupFetchAll() async throws -> [Group] {
-        try await fetch([Group].self, path: "groups", queryItems: [
+    func groupFetchAll() async throws -> [PrayerGroup] {
+        try await fetch([PrayerGroup].self, path: "groups", queryItems: [
             URLQueryItem(name: "order", value: "created_at.desc")
         ])
     }
 
-    func groupCreate(name: String, description: String) async throws -> Group {
+    func groupCreate(name: String, description: String) async throws -> PrayerGroup {
         guard let uid = userId else { throw AppError.notAuthenticated }
         let inviteCode = String((0..<8).map { _ in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".randomElement()! })
         let insert = GroupInsert(name: name, description: description, inviteCode: inviteCode, createdBy: uid)
         return try await self.insert(insert, path: "groups")
     }
 
-    func groupJoin(inviteCode: String) async throws -> Group? {
-        let groups = try await fetch([Group].self, path: "groups", queryItems: [
+    func groupJoin(inviteCode: String) async throws -> PrayerGroup? {
+        let groups = try await fetch([PrayerGroup].self, path: "groups", queryItems: [
             URLQueryItem(name: "invite_code", value: "eq.\(inviteCode.uppercased())"),
             URLQueryItem(name: "limit", value: "1")
         ])

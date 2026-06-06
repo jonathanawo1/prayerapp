@@ -118,7 +118,7 @@ private struct NoGroupView: View {
 // MARK: - Group Detail
 
 private struct GroupDetailView: View {
-    let group: Group
+    let group: PrayerGroup
     @EnvironmentObject var groupVM: GroupViewModel
     @EnvironmentObject var walksVM: WalksViewModel
     @EnvironmentObject var profileVM: ProfileViewModel

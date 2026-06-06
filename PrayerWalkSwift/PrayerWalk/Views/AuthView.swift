@@ -186,7 +186,7 @@ struct AuthView: View {
                                 authVM.errorMessage = nil
                             }
                         } label: {
-                            Group {
+                            SwiftUI.Group {
                                 if isSignUp {
                                     Text("Already have an account? ") + Text("Sign In").bold().foregroundColor(.appPrimary)
                                 } else {
