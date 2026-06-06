@@ -45,6 +45,7 @@ final class SupabaseService: ObservableObject {
     private let keyAccessToken = "pw_access_token"
     private let keyRefreshToken = "pw_refresh_token"
     private let keyUserId = "pw_user_id"
+    private let keyUserEmail = "pw_user_email"
 
     private(set) var accessToken: String? {
         get { defaults.string(forKey: keyAccessToken) }
@@ -57,6 +58,10 @@ final class SupabaseService: ObservableObject {
     private(set) var userId: String? {
         get { defaults.string(forKey: keyUserId) }
         set { defaults.set(newValue, forKey: keyUserId) }
+    }
+    private(set) var userEmail: String? {
+        get { defaults.string(forKey: keyUserEmail) }
+        set { defaults.set(newValue, forKey: keyUserEmail) }
     }
 
     var isAuthenticated: Bool { accessToken != nil && userId != nil }
@@ -89,6 +94,7 @@ final class SupabaseService: ObservableObject {
         defaults.removeObject(forKey: keyAccessToken)
         defaults.removeObject(forKey: keyRefreshToken)
         defaults.removeObject(forKey: keyUserId)
+        defaults.removeObject(forKey: keyUserEmail)
     }
 
     // MARK: - Auth
@@ -108,6 +114,7 @@ final class SupabaseService: ObservableObject {
         accessToken = auth.accessToken
         refreshToken = auth.refreshToken
         userId = auth.user.id
+        userEmail = auth.user.email
     }
 
     func signUp(email: String, password: String) async throws {
@@ -125,6 +132,7 @@ final class SupabaseService: ObservableObject {
         accessToken = auth.accessToken
         refreshToken = auth.refreshToken
         userId = auth.user.id
+        userEmail = auth.user.email
     }
 
     func signOut() async throws {
@@ -161,7 +169,9 @@ final class SupabaseService: ObservableObject {
     private func validateResponse(_ response: URLResponse, data: Data) throws {
         guard let http = response as? HTTPURLResponse else { return }
         guard (200..<300).contains(http.statusCode) else {
+            let body = String(data: data, encoding: .utf8) ?? "<binary>"
             let errMsg = (try? decoder.decode(SupabaseError.self, from: data))?.localizedMessage ?? "HTTP \(http.statusCode)"
+            print("[SupabaseService] HTTP \(http.statusCode) — \(body)")
             throw AppError.serverError(errMsg)
         }
     }

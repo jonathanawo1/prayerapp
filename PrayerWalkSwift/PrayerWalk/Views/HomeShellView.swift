@@ -81,7 +81,7 @@ struct HomeShellView: View {
             configureAppearances()
             Task {
                 await walksVM.fetchWalks()
-                await profileVM.fetchProfile(userId: authVM.userId)
+                await profileVM.ensureProfile(userId: authVM.userId, email: authVM.email)
                 if let groupId = profileVM.profile?.groupId {
                     await groupVM.fetchGroup(id: groupId)
                     await groupVM.fetchMembers()
