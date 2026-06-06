@@ -39,7 +39,7 @@ final class SupabaseService: ObservableObject {
     static let shared = SupabaseService()
 
     private let supabaseURL = "https://zzhvuoylsanybhcvxtsq.supabase.co"
-    private let anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6aHZ1b3lsc2FueWJoY3Z4dHNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTgwMjQsImV4cCI6MjA2MzkzNDAyNH0.cmJbXMKxVbdXSHqp1eL0vWMRxf1vALxKm1xjJQPq22A"
+    private let anonKey = "sb_publishable_Kdm8x4LsFvNPiz8hRM5_gA_Ur4hOB9P"
 
     private let defaults = UserDefaults.standard
     private let keyAccessToken = "pw_access_token"
