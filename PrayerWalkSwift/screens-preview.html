@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrayerWalk — App Screens</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #060D1A;
+    font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', system-ui, sans-serif;
+    color: #F0F6FF;
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: #FC4C02;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #8BA3C7;
+    font-size: 14px;
+    margin-bottom: 48px;
+    font-weight: 500;
+  }
+
+  .screens-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    justify-content: center;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .screen-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .screen-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #8BA3C7;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  /* iPhone frame */
+  .iphone {
+    width: 320px;
+    height: 693px;
+    background: #0A1628;
+    border-radius: 48px;
+    border: 8px solid #1C2E47;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px #0D1E35,
+      0 30px 80px rgba(0,0,0,0.7),
+      inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 44px;
+    background: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 22px 0;
+    font-size: 12px;
+    font-weight: 600;
+    position: relative;
+    z-index: 10;
+  }
+  .status-bar .notch {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 28px;
+    background: #060D1A;
+    border-radius: 0 0 20px 20px;
+  }
+  .status-icons { display: flex; gap: 5px; align-items: center; font-size: 11px; }
+
+  /* Nav bar */
+  .nav-bar {
+    padding: 4px 16px 10px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    background: #0A1628;
+    border-bottom: 1px solid rgba(139,163,199,0.08);
+  }
+  .nav-title-large {
+    font-size: 30px;
+    font-weight: 900;
+    color: #F0F6FF;
+    letter-spacing: -0.5px;
+  }
+  .nav-title-inline {
+    font-size: 17px;
+    font-weight: 700;
+    color: #F0F6FF;
+    flex: 1;
+    text-align: center;
+  }
+  .nav-btn { font-size: 15px; font-weight: 600; color: #FC4C02; }
+  .nav-btn-gray { font-size: 15px; font-weight: 600; color: #8BA3C7; }
+
+  /* Tab bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 82px;
+    background: #0F1B2E;
+    border-top: 1px solid rgba(139,163,199,0.06);
+    display: flex;
+    align-items: flex-start;
+    padding-top: 10px;
+  }
+  .tab-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    font-weight: 600;
+    color: rgba(139,163,199,0.5);
+  }
+  .tab-item.active { color: #FC4C02; }
+  .tab-icon { font-size: 22px; line-height: 1; }
+
+  /* FAB */
+  .fab {
+    position: absolute;
+    bottom: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 62px; height: 62px;
+    background: linear-gradient(135deg, #FF6B35, #FC4C02);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    box-shadow: 0 8px 24px rgba(252,76,2,0.55);
+    z-index: 20;
+  }
+
+  /* Scrollable content area */
+  .content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ─────── AUTH SCREEN ─────── */
+  .auth-bg {
+    background: linear-gradient(160deg, #060D1A, #0A1628, #0F1F3D);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 24px;
+  }
+  .auth-logo-ring {
+    width: 88px; height: 88px;
+    border-radius: 50%;
+    background: rgba(252,76,2,0.12);
+    border: 1.5px solid rgba(252,76,2,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px;
+    margin-top: 48px;
+  }
+  .auth-app-name {
+    font-size: 34px;
+    font-weight: 900;
+    margin-top: 14px;
+    letter-spacing: -1px;
+  }
+  .auth-tagline {
+    font-size: 13px;
+    color: #8BA3C7;
+    font-weight: 500;
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+  }
+  .auth-card {
+    width: 100%;
+    background: rgba(26,39,64,0.92);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 24px;
+    padding: 20px;
+    margin-top: 36px;
+  }
+  .auth-toggle {
+    display: flex;
+    background: rgba(10,22,40,0.6);
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 18px;
+  }
+  .auth-tab {
+    flex: 1; text-align: center;
+    padding: 9px 0;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #8BA3C7;
+  }
+  .auth-tab.active {
+    background: #1A2740;
+    color: #F0F6FF;
+  }
+  .auth-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(10,22,40,0.7);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px;
+    margin-bottom: 12px;
+  }
+  .auth-field-icon { font-size: 15px; color: #8BA3C7; width: 20px; }
+  .auth-field-text { font-size: 14px; color: rgba(139,163,199,0.5); }
+  .auth-cta {
+    width: 100%;
+    height: 52px;
+    background: linear-gradient(135deg, #FF6B35, #FC4C02);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+    margin-top: 6px;
+    box-shadow: 0 8px 24px rgba(252,76,2,0.4);
+    letter-spacing: 0.2px;
+  }
+  .auth-footer {
+    margin-top: 20px;
+    font-size: 13px;
+    color: #8BA3C7;
+    text-align: center;
+  }
+  .auth-footer span { color: #FC4C02; font-weight: 700; }
+
+  /* ─────── FEED SCREEN ─────── */
+  .feed-chips {
+    display: flex;
+    gap: 8px;
+    padding: 12px 16px;
+    overflow-x: hidden;
+  }
+  .chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    background: #1A2740;
+    color: #8BA3C7;
+    white-space: nowrap;
+  }
+  .chip.active { background: #FC4C02; color: white; }
+
+  .walk-card {
+    margin-bottom: 2px;
+    background: #1A2740;
+    overflow: hidden;
+  }
+  .walk-map-hero {
+    height: 180px;
+    position: relative;
+    overflow: hidden;
+  }
+  .map-bg {
+    width: 100%;
+    height: 100%;
+    background: #0E1E35;
+    position: relative;
+  }
+  /* SVG route paths */
+  .map-route {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+  }
+  .map-gradient-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 130px;
+    background: linear-gradient(to bottom, transparent, rgba(10,22,40,0.97));
+  }
+  .walk-hero-stats {
+    position: absolute;
+    bottom: 14px; left: 16px; right: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .walk-title-area { display: flex; flex-direction: column; gap: 3px; }
+  .walk-card-title { font-size: 14px; font-weight: 800; color: #F0F6FF; }
+  .walk-card-time { font-size: 11px; color: #8BA3C7; }
+  .walk-distance-badge { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+  .walk-dist-num { font-size: 22px; font-weight: 900; color: #F0F6FF; letter-spacing: -0.5px; }
+  .walk-dist-label { font-size: 9px; font-weight: 700; color: #8BA3C7; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .walk-stats-strip {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    background: #1A2740;
+  }
+  .stat-cell {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .stat-cell-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(139,163,199,0.12);
+  }
+  .stat-icon { font-size: 10px; color: #FC4C02; }
+  .stat-text { display: flex; flex-direction: column; gap: 0px; }
+  .stat-val { font-size: 13px; font-weight: 800; color: #F0F6FF; }
+  .stat-lbl { font-size: 8px; font-weight: 700; color: #8BA3C7; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ─────── ACTIVE WALK SCREEN ─────── */
+  .active-map {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: #0E1E35;
+    z-index: 0;
+  }
+  .active-top-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    background: linear-gradient(to bottom, rgba(6,13,26,0.97) 60%, transparent);
+    z-index: 5;
+    padding-bottom: 20px;
+  }
+  .active-timer {
+    font-size: 54px;
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -2px;
+    text-align: center;
+    padding-top: 52px;
+    font-family: 'SF Mono', 'Courier New', monospace;
+  }
+  .active-secondary-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 14px;
+    padding: 0 30px;
+  }
+  .live-stat {
+    flex: 1;
+    text-align: center;
+  }
+  .live-divider { width: 1px; height: 32px; background: rgba(255,255,255,0.1); }
+  .live-val { font-size: 19px; font-weight: 900; letter-spacing: -0.5px; }
+  .live-lbl { font-size: 9px; font-weight: 700; color: #8BA3C7; text-transform: uppercase; letter-spacing: 1px; margin-top: 1px; }
+  .recording-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 10px;
+    font-weight: 900;
+    color: #FC4C02;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .rec-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #FC4C02;
+    box-shadow: 0 0 6px rgba(252,76,2,0.8);
+  }
+  .active-bottom-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    z-index: 5;
+    background: linear-gradient(to top, rgba(6,13,26,0.97) 70%, transparent);
+    padding: 60px 24px 44px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .pause-btn {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: #1A2740;
+    border: 1px solid rgba(255,255,255,0.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .end-btn {
+    flex: 1;
+    height: 64px;
+    background: linear-gradient(135deg, #FF6B35, #FC4C02);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 17px;
+    font-weight: 900;
+    color: white;
+    box-shadow: 0 8px 24px rgba(252,76,2,0.5);
+  }
+
+  /* ─────── PROFILE SCREEN ─────── */
+  .profile-hero {
+    background: linear-gradient(to bottom, #0F1F3D, #0A1628);
+    height: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 20px;
+    gap: 10px;
+  }
+  .avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    font-weight: 900;
+    color: white;
+    border: 2px solid rgba(255,255,255,0.15);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+  .profile-name {
+    font-size: 20px;
+    font-weight: 900;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .edit-icon { font-size: 14px; color: rgba(139,163,199,0.5); }
+  .group-badge {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 12px; font-weight: 700;
+    color: #FC4C02;
+    background: rgba(252,76,2,0.12);
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  .stats-grid {
+    display: flex;
+    background: #1A2740;
+    border-radius: 18px;
+    margin: 0 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+  }
+  .big-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 8px;
+    gap: 4px;
+  }
+  .big-stat-icon { font-size: 12px; color: #FC4C02; }
+  .big-stat-val { font-size: 19px; font-weight: 900; letter-spacing: -0.5px; }
+  .big-stat-lbl { font-size: 8px; font-weight: 800; color: #8BA3C7; text-transform: uppercase; letter-spacing: 0.8px; }
+  .big-stat-divider { width: 1px; background: rgba(139,163,199,0.1); align-self: stretch; margin: 12px 0; }
+
+  .section-header {
+    font-size: 11px;
+    font-weight: 900;
+    color: #8BA3C7;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    padding: 20px 16px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .section-header-right { font-size: 11px; font-weight: 500; color: rgba(139,163,199,0.5); }
+
+  .history-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #1A2740;
+    margin: 0 16px 8px;
+    border-radius: 14px;
+  }
+  .history-accent { width: 4px; height: 46px; border-radius: 3px; }
+  .history-info { flex: 1; }
+  .history-name { font-size: 13px; font-weight: 700; }
+  .history-meta { font-size: 11px; color: #8BA3C7; margin-top: 2px; }
+  .history-date { font-size: 11px; font-weight: 600; color: #8BA3C7; text-align: right; }
+  .history-chevron { font-size: 10px; color: rgba(139,163,199,0.3); margin-top: 2px; }
+
+  /* ─────── GROUP SCREEN ─────── */
+  .group-hero {
+    background: linear-gradient(to bottom, #0F1F3D, #0A1628);
+    height: 170px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding-bottom: 18px;
+    gap: 8px;
+  }
+  .group-icon-circle {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(252,76,2,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+  }
+  .group-name { font-size: 20px; font-weight: 900; }
+  .group-desc { font-size: 12px; color: #8BA3C7; }
+  .group-stats-grid {
+    display: flex;
+    background: #1A2740;
+    border-radius: 16px;
+    margin: 16px;
+    overflow: hidden;
+  }
+  .group-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 8px;
+    gap: 4px;
+  }
+  .invite-card {
+    margin: 0 16px 16px;
+    background: #1A2740;
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .invite-label { font-size: 10px; font-weight: 800; color: #8BA3C7; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; }
+  .invite-row { display: flex; justify-content: space-between; align-items: center; }
+  .invite-code { font-size: 26px; font-weight: 900; color: #FC4C02; letter-spacing: 4px; font-family: 'SF Mono', monospace; }
+  .copy-btn {
+    background: #0A1628;
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #8BA3C7;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .member-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #1A2740;
+    margin: 0 16px 8px;
+    border-radius: 14px;
+  }
+  .member-avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 900;
+    color: white;
+  }
+  .member-name { font-size: 14px; font-weight: 700; }
+  .member-walks { font-size: 11px; color: #8BA3C7; margin-top: 2px; }
+  .you-badge {
+    font-size: 8px; font-weight: 900; color: #FC4C02;
+    background: rgba(252,76,2,0.12);
+    padding: 2px 6px; border-radius: 20px;
+    letter-spacing: 0.5px;
+    display: inline-block; margin-left: 6px;
+    vertical-align: middle;
+  }
+  .member-walk-icon { font-size: 18px; margin-left: auto; }
+
+  /* ─────── SUMMARY SCREEN ─────── */
+  .summary-hero {
+    background: linear-gradient(to bottom, #1A0A05, #0A1628);
+    height: 240px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    position: relative;
+  }
+  .glow-rings {
+    position: relative;
+    width: 110px; height: 110px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .ring { position: absolute; border-radius: 50%; }
+  .ring-1 { width: 110px; height: 110px; background: rgba(252,76,2,0.05); }
+  .ring-2 { width: 80px; height: 80px; background: rgba(252,76,2,0.08); }
+  .ring-3 { width: 56px; height: 56px; background: rgba(252,76,2,0.12); }
+  .summary-icon { position: relative; z-index: 1; font-size: 42px; }
+  .summary-title { font-size: 26px; font-weight: 900; margin-top: 14px; }
+  .summary-sub { font-size: 13px; color: #8BA3C7; margin-top: 4px; }
+
+  .summary-stats {
+    display: flex;
+    background: #1A2740;
+    border-radius: 18px;
+    margin: 0 16px 16px;
+    overflow: hidden;
+  }
+  .sum-stat {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 8px;
+    gap: 5px;
+  }
+  .sum-stat-icon { font-size: 13px; color: #FC4C02; }
+  .sum-stat-val { font-size: 16px; font-weight: 900; letter-spacing: -0.3px; }
+  .sum-stat-lbl { font-size: 9px; font-weight: 700; color: #8BA3C7; text-transform: uppercase; letter-spacing: 0.5px; }
+  .sum-divider { width: 1px; background: rgba(139,163,199,0.1); align-self: stretch; margin: 10px 0; }
+
+  .form-field {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 14px;
+    background: #1A2740;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    margin: 0 16px 10px;
+  }
+  .field-icon { font-size: 13px; color: #FC4C02; margin-top: 1px; }
+  .field-placeholder { font-size: 14px; color: rgba(139,163,199,0.45); }
+
+  .save-btn {
+    margin: 4px 16px 0;
+    height: 52px;
+    background: linear-gradient(135deg, #FF6B35, #FC4C02);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 900;
+    color: white;
+    box-shadow: 0 8px 24px rgba(252,76,2,0.4);
+  }
+  .discard-btn {
+    text-align: center;
+    font-size: 14px;
+    color: #8BA3C7;
+    padding: 12px 0;
+    font-weight: 500;
+  }
+
+  /* Map grid pattern */
+  .map-grid {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  .map-road {
+    position: absolute;
+    background: rgba(139,163,199,0.08);
+    border-radius: 2px;
+  }
+
+  /* Pulse animation */
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.6; }
+  }
+  .rec-dot { animation: pulse 1.2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<h1>PrayerWalk</h1>
+<p class="subtitle">Native Swift iOS App · Strava-Inspired UI · All Screens Preview</p>
+
+<div class="screens-grid">
+
+  <!-- ──── AUTH SCREEN ──── -->
+  <div class="screen-wrapper">
+    <span class="screen-label">Sign In</span>
+    <div class="iphone">
+      <div class="status-bar" style="background: #060D1A;">
+        <div class="notch"></div>
+        <span>9:41</span>
+        <div class="status-icons">
+          <span>●●●</span>
+          <span>WiFi</span>
+          <span>🔋</span>
+        </div>
+      </div>
+
+      <div class="auth-bg">
+        <div class="auth-logo-ring">🚶</div>
+        <div class="auth-app-name">PrayerWalk</div>
+        <div class="auth-tagline">Walk. Pray. Together.</div>
+
+        <div class="auth-card">
+          <div class="auth-toggle">
+            <div class="auth-tab active">Sign In</div>
+            <div class="auth-tab">Sign Up</div>
+          </div>
+          <div class="auth-field">
+            <span class="auth-field-icon">✉</span>
+            <span class="auth-field-text">Email address</span>
+          </div>
+          <div class="auth-field" style="border-color: rgba(252,76,2,0.4);">
+            <span class="auth-field-icon" style="color:#FC4C02">🔒</span>
+            <span class="auth-field-text">Password</span>
+          </div>
+          <div class="auth-cta">Sign In</div>
+        </div>
+
+        <div style="margin-top: 20px; width: 100%; display: flex; align-items: center; gap: 10px; padding: 0 0;">
+          <div style="flex:1;height:1px;background:rgba(139,163,199,0.12)"></div>
+          <span style="font-size:12px;color:#8BA3C7;">or</span>
+          <div style="flex:1;height:1px;background:rgba(139,163,199,0.12)"></div>
+        </div>
+
+        <div class="auth-footer" style="margin-top:16px">
+          New here? <span>Create an account</span>
+        </div>
+
+        <div style="margin-top:auto;padding-bottom:24px;font-size:10px;color:rgba(139,163,199,0.3);letter-spacing:0.5px;">
+          Community Prayer • Faith in Motion
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── FEED SCREEN ──── -->
+  <div class="screen-wrapper">
+    <span class="screen-label">Prayer Feed</span>
+    <div class="iphone">
+      <div class="status-bar"><div class="notch"></div><span>9:41</span><div class="status-icons"><span>●●●</span><span>🔋</span></div></div>
+      <div class="nav-bar"><div class="nav-title-large">Prayer Walks</div></div>
+
+      <div class="feed-chips">
+        <div class="chip active">All Time</div>
+        <div class="chip">This Week</div>
+        <div class="chip">Today</div>
+      </div>
+
+      <!-- Card 1 -->
+      <div class="walk-card">
+        <div class="walk-map-hero">
+          <div class="map-bg">
+            <div class="map-grid"></div>
+            <!-- Roads -->
+            <div class="map-road" style="width:100%;height:3px;top:45%;background:rgba(139,163,199,0.06)"></div>
+            <div class="map-road" style="width:3px;height:100%;left:38%;background:rgba(139,163,199,0.06)"></div>
+            <div class="map-road" style="width:100%;height:2px;top:72%;background:rgba(139,163,199,0.05)"></div>
+            <!-- Route -->
+            <svg viewBox="0 0 320 180" class="map-route">
+              <defs>
+                <filter id="glow1">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <polyline points="40,140 70,110 90,90 120,75 150,70 170,80 200,70 230,55 260,60 280,75 290,100"
+                fill="none" stroke="#FC4C02" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow1)"/>
+              <circle cx="40" cy="140" r="6" fill="white"/>
+              <circle cx="40" cy="140" r="3.5" fill="#FC4C02"/>
+              <circle cx="290" cy="100" r="5" fill="white"/>
+              <circle cx="290" cy="100" r="3" fill="#FC4C02"/>
+            </svg>
+          </div>
+          <div class="map-gradient-overlay"></div>
+          <div class="walk-hero-stats">
+            <div class="walk-title-area">
+              <div class="walk-card-title">Morning Neighborhood Walk</div>
+              <div class="walk-card-time">32 min ago</div>
+            </div>
+            <div class="walk-distance-badge">
+              <div class="walk-dist-num">3.2</div>
+              <div class="walk-dist-label">kilometers</div>
+            </div>
+          </div>
+        </div>
+        <div class="walk-stats-strip">
+          <div class="stat-cell">
+            <span class="stat-icon">⏱</span>
+            <div class="stat-text"><div class="stat-val">28:14</div><div class="stat-lbl">Time</div></div>
+          </div>
+          <div class="stat-cell-divider"></div>
+          <div class="stat-cell">
+            <span class="stat-icon">⚡</span>
+            <div class="stat-text"><div class="stat-val">8:49</div><div class="stat-lbl">Pace</div></div>
+          </div>
+          <div class="stat-cell-divider"></div>
+          <div class="stat-cell">
+            <span class="stat-icon">📍</span>
+            <div class="stat-text"><div class="stat-val">47</div><div class="stat-lbl">Points</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="walk-card" style="margin-top:2px">
+        <div class="walk-map-hero">
+          <div class="map-bg">
+            <div class="map-grid"></div>
+            <div class="map-road" style="width:100%;height:3px;top:55%;background:rgba(139,163,199,0.06)"></div>
+            <div class="map-road" style="width:3px;height:100%;left:60%;background:rgba(139,163,199,0.06)"></div>
+            <svg viewBox="0 0 320 180" class="map-route">
+              <defs>
+                <filter id="glow2">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+              <polyline points="30,60 60,80 100,100 130,120 150,130 180,120 200,100 220,80 240,90 260,110 270,140"
+                fill="none" stroke="#00B4D8" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow2)"/>
+              <circle cx="30" cy="60" r="6" fill="white"/>
+              <circle cx="30" cy="60" r="3.5" fill="#00B4D8"/>
+              <circle cx="270" cy="140" r="5" fill="white"/>
+              <circle cx="270" cy="140" r="3" fill="#00B4D8"/>
+            </svg>
+          </div>
+          <div class="map-gradient-overlay"></div>
+          <div class="walk-hero-stats">
+            <div class="walk-title-area">
+              <div class="walk-card-title">Evening River Walk</div>
+              <div class="walk-card-time">2 hr ago</div>
+            </div>
+            <div class="walk-distance-badge">
+              <div class="walk-dist-num">5.7</div>
+              <div class="walk-dist-label">kilometers</div>
+            </div>
+          </div>
+        </div>
+        <div class="walk-stats-strip">
+          <div class="stat-cell">
+            <span class="stat-icon">⏱</span>
+            <div class="stat-text"><div class="stat-val">51:22</div><div class="stat-lbl">Time</div></div>
+          </div>
+          <div class="stat-cell-divider"></div>
+          <div class="stat-cell">
+            <span class="stat-icon">⚡</span>
+            <div class="stat-text"><div class="stat-val">9:01</div><div class="stat-lbl">Pace</div></div>
+          </div>
+          <div class="stat-cell-divider"></div>
+          <div class="stat-cell">
+            <span class="stat-icon">📍</span>
+            <div class="stat-text"><div class="stat-val">83</div><div class="stat-lbl">Points</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item active"><div class="tab-icon">≡</div>Feed</div>
+        <div class="tab-item"><div class="tab-icon">🗺</div>Map</div>
+        <div class="tab-item" style="visibility:hidden"></div>
+        <div class="tab-item"><div class="tab-icon">👥</div>Club</div>
+        <div class="tab-item"><div class="tab-icon">👤</div>You</div>
+      </div>
+      <div class="fab">🚶</div>
+    </div>
+  </div>
+
+  <!-- ──── ACTIVE WALK SCREEN ──── -->
+  <div class="screen-wrapper">
+    <span class="screen-label">Active Walk</span>
+    <div class="iphone" style="background:#0E1E35">
+      <div class="status-bar" style="background:rgba(6,13,26,0.97); position:absolute; z-index:10; width:100%;">
+        <div class="notch"></div>
+        <span>9:41</span>
+        <div class="status-icons"><span>●●●</span><span>🔋</span></div>
+      </div>
+
+      <!-- Map background -->
+      <div class="active-map">
+        <div class="map-grid"></div>
+        <div class="map-road" style="width:100%;height:4px;top:50%;background:rgba(139,163,199,0.07)"></div>
+        <div class="map-road" style="width:3px;height:100%;left:42%;background:rgba(139,163,199,0.07)"></div>
+        <div class="map-road" style="width:100%;height:3px;top:70%;background:rgba(139,163,199,0.05)"></div>
+        <div class="map-road" style="width:3px;height:100%;left:72%;background:rgba(139,163,199,0.05)"></div>
+        <svg viewBox="0 0 320 693" style="position:absolute;top:0;left:0;width:100%;height:100%">
+          <defs>
+            <filter id="glowRoute">
+              <feGaussianBlur stdDeviation="4" result="blur"/>
+              <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <polyline points="60,550 80,520 100,490 130,460 150,440 170,410 190,390 210,365 240,340 260,310 270,280 260,250"
+            fill="none" stroke="#FC4C02" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" filter="url(#glowRoute)"/>
+          <!-- User location puck -->
+          <circle cx="260" cy="250" r="18" fill="rgba(252,76,2,0.15)"/>
+          <circle cx="260" cy="250" r="10" fill="rgba(252,76,2,0.4)"/>
+          <circle cx="260" cy="250" r="5" fill="#FC4C02"/>
+          <circle cx="260" cy="250" r="5" fill="white" opacity="0.5"/>
+          <!-- Start dot -->
+          <circle cx="60" cy="550" r="8" fill="white"/>
+          <circle cx="60" cy="550" r="4.5" fill="#FC4C02"/>
+        </svg>
+      </div>
+
+      <!-- Top stats overlay -->
+      <div class="active-top-overlay">
+        <div style="height:44px"></div><!-- status bar space -->
+        <div class="active-timer">28:14</div>
+        <div class="active-secondary-stats">
+          <div class="live-stat">
+            <div class="live-val">3.2</div>
+            <div class="live-lbl">KM</div>
+          </div>
+          <div class="live-divider"></div>
+          <div class="live-stat">
+            <div class="live-val">8:49</div>
+            <div class="live-lbl">Pace</div>
+          </div>
+          <div class="live-divider"></div>
+          <div class="live-stat">
+            <div class="live-val">47</div>
+            <div class="live-lbl">Points</div>
+          </div>
+        </div>
+        <div class="recording-badge">
+          <div class="rec-dot"></div>
+          Recording
+        </div>
+      </div>
+
+      <!-- Bottom controls -->
+      <div class="active-bottom-overlay">
+        <div class="pause-btn">⏸</div>
+        <div class="end-btn">
+          <span style="font-size:15px">⏹</span>
+          Finish
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── WALK SUMMARY SCREEN ──── -->
+  <div class="screen-wrapper">
+    <span class="screen-label">Walk Summary</span>
+    <div class="iphone">
+      <div class="status-bar"><div class="notch"></div><span>9:41</span><div class="status-icons"><span>●●●</span><span>🔋</span></div></div>
+
+      <div class="summary-hero">
+        <div class="glow-rings">
+          <div class="ring ring-1"></div>
+          <div class="ring ring-2"></div>
+          <div class="ring ring-3"></div>
+          <div class="summary-icon">🚶</div>
+        </div>
+        <div class="summary-title">Walk Complete!</div>
+        <div class="summary-sub">Great job. Keep walking in faith.</div>
+      </div>
+
+      <div style="height:16px;background:#0A1628"></div>
+
+      <div class="summary-stats">
+        <div class="sum-stat">
+          <div class="sum-stat-icon">↔</div>
+          <div class="sum-stat-val">3.2 km</div>
+          <div class="sum-stat-lbl">Distance</div>
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-stat">
+          <div class="sum-stat-icon">🕐</div>
+          <div class="sum-stat-val">28:14</div>
+          <div class="sum-stat-lbl">Duration</div>
+        </div>
+        <div class="sum-divider"></div>
+        <div class="sum-stat">
+          <div class="sum-stat-icon">⚡</div>
+          <div class="sum-stat-val">8:49</div>
+          <div class="sum-stat-lbl">Pace</div>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <div class="field-icon">🏷</div>
+        <div class="field-placeholder">Name this walk (optional)</div>
+      </div>
+      <div class="form-field">
+        <div class="field-icon">🙏</div>
+        <div class="field-placeholder">What did you pray for? (optional)</div>
+      </div>
+
+      <div class="save-btn">
+        <span>💾</span> Save Walk
+      </div>
+      <div class="discard-btn">Discard</div>
+    </div>
+  </div>
+
+  <!-- ──── PROFILE SCREEN ──── -->
+  <div class="screen-wrapper">
+    <span class="screen-label">Profile</span>
+    <div class="iphone">
+      <div class="status-bar"><div class="notch"></div><span>9:41</span><div class="status-icons"><span>●●●</span><span>🔋</span></div></div>
+
+      <div class="profile-hero">
+        <div class="avatar" style="background: linear-gradient(135deg,#06D6A0,#00B4D8)">JA</div>
+        <div class="profile-name">
+          Jonathan
+          <span class="edit-icon">✏</span>
+        </div>
+        <div class="group-badge">👥 Downtown Prayer Warriors</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="big-stat">
+          <div class="big-stat-icon">🚶</div>
+          <div class="big-stat-val">12</div>
+          <div class="big-stat-lbl">Walks</div>
+        </div>
+        <div class="big-stat-divider"></div>
+        <div class="big-stat">
+          <div class="big-stat-icon">↔</div>
+          <div class="big-stat-val">47.3</div>
+          <div class="big-stat-lbl">Total km</div>
+        </div>
+        <div class="big-stat-divider"></div>
+        <div class="big-stat">
+          <div class="big-stat-icon">🕐</div>
+          <div class="big-stat-val">7:12</div>
+          <div class="big-stat-lbl">Time</div>
+        </div>
+      </div>
+
+      <div class="section-header">
+        Walk History
+        <span class="section-header-right">12 walks</span>
+      </div>
+
+      <div class="history-card">
+        <div class="history-accent" style="background:#FC4C02"></div>
+        <div class="history-info">
+          <div class="history-name">Morning Neighborhood Walk</div>
+          <div class="history-meta">3.2 km  •  28:14</div>
+        </div>
+        <div style="text-align:right">
+          <div class="history-date">Jun 6</div>
+          <div class="history-chevron">›</div>
+        </div>
+      </div>
+      <div class="history-card">
+        <div class="history-accent" style="background:#06D6A0"></div>
+        <div class="history-info">
+          <div class="history-name">Evening River Walk</div>
+          <div class="history-meta">5.7 km  •  51:22</div>
+        </div>
+        <div style="text-align:right">
+          <div class="history-date">Jun 5</div>
+          <div class="history-chevron">›</div>
+        </div>
+      </div>
+      <div class="history-card">
+        <div class="history-accent" style="background:#00B4D8"></div>
+        <div class="history-info">
+          <div class="history-name">Prayer Walk</div>
+          <div class="history-meta">2.1 km  •  19:45</div>
+        </div>
+        <div style="text-align:right">
+          <div class="history-date">Jun 3</div>
+          <div class="history-chevron">›</div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item"><div class="tab-icon">≡</div>Feed</div>
+        <div class="tab-item"><div class="tab-icon">🗺</div>Map</div>
+        <div class="tab-item" style="visibility:hidden"></div>
+        <div class="tab-item"><div class="tab-icon">👥</div>Club</div>
+        <div class="tab-item active"><div class="tab-icon">👤</div>You</div>
+      </div>
+      <div class="fab">🚶</div>
+    </div>
+  </div>
+
+  <!-- ──── GROUP SCREEN ──── -->
+  <div class="screen-wrapper">
+    <span class="screen-label">Prayer Club</span>
+    <div class="iphone">
+      <div class="status-bar"><div class="notch"></div><span>9:41</span><div class="status-icons"><span>●●●</span><span>🔋</span></div></div>
+      <div class="nav-bar"><div class="nav-title-large">Prayer Club</div></div>
+
+      <div class="group-hero">
+        <div class="group-icon-circle">👥</div>
+        <div class="group-name">Downtown Prayer Warriors</div>
+        <div class="group-desc">Praying through Nottingham city centre</div>
+      </div>
+
+      <div class="group-stats-grid">
+        <div class="group-stat">
+          <div style="font-size:11px;color:#FC4C02">👤</div>
+          <div style="font-size:18px;font-weight:900">8</div>
+          <div style="font-size:8px;font-weight:800;color:#8BA3C7;text-transform:uppercase;letter-spacing:0.5px">Members</div>
+        </div>
+        <div style="width:1px;background:rgba(139,163,199,0.1);margin:10px 0"></div>
+        <div class="group-stat">
+          <div style="font-size:11px;color:#FC4C02">🚶</div>
+          <div style="font-size:18px;font-weight:900">34</div>
+          <div style="font-size:8px;font-weight:800;color:#8BA3C7;text-transform:uppercase;letter-spacing:0.5px">Walks</div>
+        </div>
+        <div style="width:1px;background:rgba(139,163,199,0.1);margin:10px 0"></div>
+        <div class="group-stat">
+          <div style="font-size:11px;color:#FC4C02">↔</div>
+          <div style="font-size:18px;font-weight:900">121</div>
+          <div style="font-size:8px;font-weight:800;color:#8BA3C7;text-transform:uppercase;letter-spacing:0.5px">km</div>
+        </div>
+      </div>
+
+      <div class="invite-card">
+        <div class="invite-label">Invite Code</div>
+        <div class="invite-row">
+          <div class="invite-code">PW4K9X</div>
+          <div class="copy-btn">⧉ Copy</div>
+        </div>
+      </div>
+
+      <div style="font-size:10px;font-weight:800;color:#8BA3C7;text-transform:uppercase;letter-spacing:0.8px;padding:4px 16px 10px">Members (8)</div>
+
+      <div class="member-row">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#06D6A0,#00B4D8)">JA</div>
+        <div>
+          <div class="member-name">Jonathan <span class="you-badge">YOU</span></div>
+          <div class="member-walks">12 walks</div>
+        </div>
+        <div class="member-walk-icon" style="color:#06D6A0">🚶</div>
+      </div>
+      <div class="member-row">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#FC4C02,#FF6B35)">SA</div>
+        <div>
+          <div class="member-name">Sarah</div>
+          <div class="member-walks">9 walks</div>
+        </div>
+        <div class="member-walk-icon" style="color:#FC4C02">🚶</div>
+      </div>
+      <div class="member-row">
+        <div class="member-avatar" style="background:linear-gradient(135deg,#7B2D8B,#EF476F)">MK</div>
+        <div>
+          <div class="member-name">Marcus</div>
+          <div class="member-walks">7 walks</div>
+        </div>
+        <div class="member-walk-icon" style="color:#7B2D8B">🚶</div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item"><div class="tab-icon">≡</div>Feed</div>
+        <div class="tab-item"><div class="tab-icon">🗺</div>Map</div>
+        <div class="tab-item" style="visibility:hidden"></div>
+        <div class="tab-item active"><div class="tab-icon">👥</div>Club</div>
+        <div class="tab-item"><div class="tab-icon">👤</div>You</div>
+      </div>
+      <div class="fab">🚶</div>
+    </div>
+  </div>
+
+  <!-- ──── COMMUNITY MAP SCREEN ──── -->
+  <div class="screen-wrapper">
+    <span class="screen-label">Community Map</span>
+    <div class="iphone" style="background:#0E1E35">
+      <div class="status-bar" style="background:transparent; position:absolute; z-index:10; width:100%;">
+        <div class="notch" style="background:#0E1E35"></div>
+        <span>9:41</span>
+        <div class="status-icons"><span>●●●</span><span>🔋</span></div>
+      </div>
+
+      <!-- Full screen map -->
+      <div style="position:absolute;top:0;left:0;right:0;bottom:0">
+        <div class="map-grid"></div>
+        <div class="map-road" style="width:100%;height:4px;top:38%;background:rgba(139,163,199,0.07)"></div>
+        <div class="map-road" style="width:3px;height:100%;left:35%;background:rgba(139,163,199,0.07)"></div>
+        <div class="map-road" style="width:100%;height:3px;top:62%;background:rgba(139,163,199,0.06)"></div>
+        <div class="map-road" style="width:3px;height:100%;left:70%;background:rgba(139,163,199,0.05)"></div>
+        <div class="map-road" style="width:3px;height:60%;left:55%;top:20%;background:rgba(139,163,199,0.05)"></div>
+        <svg viewBox="0 0 320 693" style="position:absolute;top:0;left:0;width:100%;height:100%">
+          <defs>
+            <filter id="g1"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="g2"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="g3"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <filter id="g4"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <!-- Route 1 - orange (selected) -->
+          <polyline points="40,500 70,470 90,440 120,410 150,390 170,370 200,350 230,320 260,300 290,280"
+            fill="none" stroke="#FC4C02" stroke-width="4.5" stroke-linecap="round" filter="url(#g1)"/>
+          <!-- Route 2 - cyan (dimmed) -->
+          <polyline points="30,200 60,230 100,260 140,280 170,270 200,250 220,260 250,280 270,310"
+            fill="none" stroke="#00B4D8" stroke-width="3" stroke-linecap="round" opacity="0.35" filter="url(#g2)"/>
+          <!-- Route 3 - green (dimmed) -->
+          <polyline points="180,140 200,170 220,200 230,240 220,270 210,300 220,330 240,350 260,370"
+            fill="none" stroke="#06D6A0" stroke-width="3" stroke-linecap="round" opacity="0.35" filter="url(#g3)"/>
+          <!-- Route 4 - purple (dimmed) -->
+          <polyline points="60,300 90,310 120,330 150,340 160,360 170,390 160,420 150,450 160,480"
+            fill="none" stroke="#7B2D8B" stroke-width="3" stroke-linecap="round" opacity="0.35" filter="url(#g4)"/>
+          <!-- User dot -->
+          <circle cx="180" cy="400" r="16" fill="rgba(255,255,255,0.08)"/>
+          <circle cx="180" cy="400" r="8" fill="rgba(255,255,255,0.3)"/>
+          <circle cx="180" cy="400" r="5" fill="white"/>
+        </svg>
+      </div>
+
+      <!-- Selected route panel -->
+      <div style="position:absolute;bottom:90px;left:16px;right:16px;z-index:20;">
+        <div style="
+          background: rgba(8,17,31,0.96);
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 18px;
+          padding: 14px 16px;
+          box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        ">
+          <div style="width:4px;height:50px;background:#FC4C02;border-radius:3px;flex-shrink:0"></div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:800;color:#F0F6FF;">Morning Neighborhood Walk</div>
+            <div style="display:flex;gap:14px;margin-top:4px">
+              <span style="font-size:11px;color:#8BA3C7;display:flex;gap:4px;align-items:center">
+                <span style="color:#FC4C02;font-size:9px">↔</span> 3.2 km
+              </span>
+              <span style="font-size:11px;color:#8BA3C7;display:flex;gap:4px;align-items:center">
+                <span style="color:#FC4C02;font-size:9px">🕐</span> 28:14
+              </span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;align-items:center">
+            <span style="font-size:22px;color:#FC4C02">ⓘ</span>
+            <span style="font-size:22px;color:rgba(139,163,199,0.4)">✕</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <div class="tab-item"><div class="tab-icon">≡</div>Feed</div>
+        <div class="tab-item active"><div class="tab-icon">🗺</div>Map</div>
+        <div class="tab-item" style="visibility:hidden"></div>
+        <div class="tab-item"><div class="tab-icon">👥</div>Club</div>
+        <div class="tab-item"><div class="tab-icon">👤</div>You</div>
+      </div>
+      <div class="fab">🚶</div>
+    </div>
+  </div>
+
+</div>
+
+<p style="text-align:center;color:rgba(139,163,199,0.3);font-size:12px;margin-top:48px;letter-spacing:0.5px;">
+  PrayerWalk iOS · SwiftUI · MapKit · Dark Mode
+</p>
+
+</body>
+</html>
