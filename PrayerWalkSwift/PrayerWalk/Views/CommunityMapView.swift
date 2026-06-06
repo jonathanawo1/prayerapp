@@ -69,9 +69,11 @@ private struct MapOverlayView: UIViewRepresentable {
         m.delegate = context.coordinator
         m.overrideUserInterfaceStyle = .dark
         m.showsUserLocation = true
-        let cfg = MKStandardMapConfiguration(emphasisStyle: .muted)
-        cfg.showsTraffic = false
-        m.preferredConfiguration = cfg
+        if #available(iOS 17.0, *) {
+            let cfg = MKStandardMapConfiguration(emphasisStyle: .muted)
+            cfg.showsTraffic = false
+            m.preferredConfiguration = cfg
+        }
         m.pointOfInterestFilter = .excludingAll
 
         let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(MapCoordinator.handleTap(_:)))

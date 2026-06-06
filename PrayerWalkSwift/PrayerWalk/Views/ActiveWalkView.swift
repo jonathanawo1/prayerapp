@@ -230,9 +230,11 @@ struct LiveRouteMapView: UIViewRepresentable {
         m.showsUserLocation = true
         m.userTrackingMode = .follow
         m.overrideUserInterfaceStyle = .dark
-        let cfg = MKStandardMapConfiguration(emphasisStyle: .muted)
-        cfg.showsTraffic = false
-        m.preferredConfiguration = cfg
+        if #available(iOS 17.0, *) {
+            let cfg = MKStandardMapConfiguration(emphasisStyle: .muted)
+            cfg.showsTraffic = false
+            m.preferredConfiguration = cfg
+        }
         m.pointOfInterestFilter = .excludingAll
         return m
     }

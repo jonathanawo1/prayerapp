@@ -7,7 +7,7 @@ struct ContentView: View {
     @EnvironmentObject var authVM: AuthViewModel
 
     var body: some View {
-        Group {
+        SwiftUI.Group {
             if authVM.isAuthenticated {
                 HomeShellView()
             } else {
