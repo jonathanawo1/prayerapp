@@ -9,135 +9,175 @@ struct ProfileView: View {
     @EnvironmentObject var walksVM: WalksViewModel
     @EnvironmentObject var groupVM: GroupViewModel
 
-    @State private var isEditingName: Bool = false
-    @State private var editedName: String = ""
+    @State private var isEditingName = false
+    @State private var editedName = ""
 
-    private var userWalks: [Walk] {
-        walksVM.walks.filter { $0.userId == authVM.userId }
-    }
-
+    private var userWalks: [Walk] { walksVM.walks.filter { $0.userId == authVM.userId } }
     private var totalDistance: Double { userWalks.reduce(0) { $0 + $1.distance } }
     private var totalDuration: Int { userWalks.reduce(0) { $0 + $1.duration } }
+    private var displayName: String { profileVM.profile?.displayName ?? "Walker" }
+    private var initials: String { String(displayName.prefix(2)).uppercased() }
 
     var body: some View {
         NavigationView {
             ZStack {
                 Color.appBackground.ignoresSafeArea()
 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
-                        // Avatar + Name
-                        VStack(spacing: 12) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.appPrimary.opacity(0.2))
-                                    .frame(width: 88, height: 88)
-                                Image(systemName: "figure.walk")
-                                    .font(.system(size: 40))
-                                    .foregroundColor(.appPrimary)
-                            }
+                        // Hero header
+                        ZStack(alignment: .bottom) {
+                            // Background gradient
+                            LinearGradient(
+                                colors: [Color(hex: "0F1F3D"), Color.appBackground],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: 220)
 
-                            if isEditingName {
-                                HStack(spacing: 8) {
-                                    TextField("Display Name", text: $editedName)
-                                        .font(.title2.bold())
-                                        .multilineTextAlignment(.center)
-                                        .foregroundColor(.appTextPrimary)
-                                        .textFieldStyle(.roundedBorder)
-
-                                    Button {
-                                        Task {
-                                            await profileVM.updateDisplayName(editedName, userId: authVM.userId)
-                                            isEditingName = false
-                                        }
-                                    } label: {
-                                        Image(systemName: "checkmark.circle.fill")
-                                            .foregroundColor(.appSuccess)
-                                            .font(.title2)
-                                    }
-
-                                    Button {
-                                        isEditingName = false
-                                    } label: {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(.appTextSecondary)
-                                            .font(.title2)
-                                    }
+                            VStack(spacing: 14) {
+                                // Avatar
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.routeColor(for: authVM.userId))
+                                        .frame(width: 88, height: 88)
+                                    Text(initials)
+                                        .font(.system(size: 32, weight: .black))
+                                        .foregroundStyle(.white)
                                 }
-                                .padding(.horizontal, 32)
-                            } else {
-                                HStack(spacing: 8) {
-                                    Text(profileVM.profile?.displayName ?? "Walker")
-                                        .font(.title2.bold())
-                                        .foregroundColor(.appTextPrimary)
+                                .overlay(
+                                    Circle()
+                                        .strokeBorder(Color.white.opacity(0.15), lineWidth: 2)
+                                )
+                                .shadow(color: Color.appPrimary.opacity(0.3), radius: 20, x: 0, y: 8)
+
+                                // Name
+                                if isEditingName {
+                                    HStack(spacing: 10) {
+                                        TextField("Display Name", text: $editedName)
+                                            .font(.system(size: 22, weight: .black))
+                                            .foregroundStyle(Color.appTextPrimary)
+                                            .multilineTextAlignment(.center)
+                                            .autocorrectionDisabled()
+                                            .frame(maxWidth: 200)
+
+                                        Button {
+                                            Task {
+                                                await profileVM.updateDisplayName(editedName, userId: authVM.userId)
+                                                isEditingName = false
+                                            }
+                                        } label: {
+                                            Image(systemName: "checkmark.circle.fill")
+                                                .font(.title2)
+                                                .foregroundStyle(Color.appSuccess)
+                                        }
+
+                                        Button {
+                                            isEditingName = false
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .font(.title2)
+                                                .foregroundStyle(Color.appTextSecondary)
+                                        }
+                                    }
+                                } else {
                                     Button {
-                                        editedName = profileVM.profile?.displayName ?? ""
+                                        editedName = displayName
                                         isEditingName = true
                                     } label: {
-                                        Image(systemName: "pencil.circle")
-                                            .foregroundColor(.appTextSecondary)
+                                        HStack(spacing: 6) {
+                                            Text(displayName)
+                                                .font(.system(size: 22, weight: .black))
+                                                .foregroundStyle(Color.appTextPrimary)
+                                            Image(systemName: "pencil")
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundStyle(Color.appTextSecondary.opacity(0.6))
+                                        }
                                     }
                                 }
-                            }
 
-                            if let group = groupVM.group {
-                                Label(group.name, systemImage: "person.3.fill")
-                                    .font(.subheadline)
-                                    .foregroundColor(.appPrimary)
+                                if let group = groupVM.group {
+                                    HStack(spacing: 5) {
+                                        Image(systemName: "person.3.fill")
+                                            .font(.system(size: 11))
+                                        Text(group.name)
+                                            .font(.system(size: 13, weight: .semibold))
+                                    }
+                                    .foregroundStyle(Color.appPrimary)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 5)
+                                    .background(Color.appPrimary.opacity(0.12))
+                                    .clipShape(Capsule())
+                                }
                             }
+                            .padding(.bottom, 24)
                         }
-                        .padding(.vertical, 28)
 
-                        // Stats
+                        // Stats grid
                         HStack(spacing: 1) {
-                            ProfileStatBox(label: "Walks", value: "\(userWalks.count)")
-                            Divider().background(Color.appSeparator)
-                            ProfileStatBox(label: "Distance", value: formatDistance(totalDistance))
-                            Divider().background(Color.appSeparator)
-                            ProfileStatBox(label: "Time", value: formatDuration(totalDuration))
+                            BigStat(value: "\(userWalks.count)", label: "WALKS", icon: "figure.walk")
+                            Rectangle().fill(Color.appSeparator).frame(width: 1)
+                            BigStat(value: formatDistance(totalDistance), label: "TOTAL", icon: "arrow.left.and.right")
+                            Rectangle().fill(Color.appSeparator).frame(width: 1)
+                            BigStat(value: formatDuration(totalDuration), label: "TIME", icon: "clock.fill")
                         }
                         .background(Color.appSurface)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 28)
+                        .padding(.top, -1)
+                        .shadow(color: Color.black.opacity(0.3), radius: 12, x: 0, y: 4)
 
                         // Walk history
                         if !userWalks.isEmpty {
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Walk History")
-                                    .font(.caption.bold())
-                                    .foregroundColor(.appTextSecondary)
-                                    .textCase(.uppercase)
-                                    .padding(.horizontal, 20)
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack {
+                                    Text("Walk History")
+                                        .font(.system(size: 13, weight: .black))
+                                        .foregroundStyle(Color.appTextSecondary)
+                                        .textCase(.uppercase)
+                                        .tracking(0.8)
+                                    Spacer()
+                                    Text("\(userWalks.count) walks")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundStyle(Color.appTextSecondary.opacity(0.6))
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 28)
 
                                 ForEach(userWalks) { walk in
-                                    WalkHistoryRow(walk: walk)
+                                    WalkHistoryCard(walk: walk)
                                         .padding(.horizontal, 20)
                                 }
                             }
                         }
 
-                        // Sign Out
+                        // Sign out
                         Button(role: .destructive) {
                             Task { await authVM.signOut() }
                         } label: {
-                            Label("Sign Out", systemImage: "rectangle.portrait.and.arrow.right")
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 14)
-                                .background(Color.appError.opacity(0.12))
-                                .foregroundColor(.appError)
-                                .font(.system(size: 15, weight: .semibold))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .padding(.horizontal, 20)
+                            HStack {
+                                Image(systemName: "rectangle.portrait.and.arrow.right")
+                                Text("Sign Out")
+                            }
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(Color.appError)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 15)
+                            .background(Color.appError.opacity(0.1))
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 14)
+                                    .strokeBorder(Color.appError.opacity(0.2), lineWidth: 1)
+                            )
                         }
-                        .padding(.top, 32)
-                        .padding(.bottom, 40)
+                        .padding(.horizontal, 20)
+                        .padding(.top, 28)
+                        .padding(.bottom, 100)
                     }
                 }
             }
             .navigationTitle("Profile")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .navigationBarTitleDisplayMode(.inline)
         }
         .onAppear {
             Task { await profileVM.fetchProfile(userId: authVM.userId) }
@@ -145,66 +185,82 @@ struct ProfileView: View {
     }
 }
 
-private struct ProfileStatBox: View {
-    let label: String
+// MARK: - Big Stat
+
+private struct BigStat: View {
     let value: String
+    let label: String
+    let icon: String
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(Color.appPrimary)
             Text(value)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
-                .foregroundColor(.appTextPrimary)
+                .font(.system(size: 20, weight: .black, design: .rounded))
+                .foregroundStyle(Color.appTextPrimary)
             Text(label)
-                .font(.caption)
-                .foregroundColor(.appTextSecondary)
+                .font(.system(size: 9, weight: .bold))
+                .foregroundStyle(Color.appTextSecondary)
+                .tracking(0.8)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, 20)
     }
 }
 
-private struct WalkHistoryRow: View {
+// MARK: - Walk History Card
+
+private struct WalkHistoryCard: View {
     let walk: Walk
+    @State private var show = false
 
     var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(Color.appPrimary.opacity(0.15))
-                    .frame(width: 44, height: 44)
-                Image(systemName: "figure.walk")
-                    .foregroundColor(.appPrimary)
+        Button { show = true } label: {
+            HStack(spacing: 14) {
+                // Color accent bar
+                RoundedRectangle(cornerRadius: 3)
+                    .fill(Color.routeColor(for: walk.userId))
+                    .frame(width: 4, height: 48)
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(walk.title ?? "Prayer Walk")
+                        .font(.system(size: 14, weight: .bold))
+                        .foregroundStyle(Color.appTextPrimary)
+                        .lineLimit(1)
+                    Text("\(formatDistance(walk.distance))  •  \(formatDuration(walk.duration))")
+                        .font(.system(size: 12))
+                        .foregroundStyle(Color.appTextSecondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 3) {
+                    Text(shortDate(walk.startTime))
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(Color.appTextSecondary)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(Color.appTextSecondary.opacity(0.4))
+                }
             }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(walk.title ?? "Prayer Walk")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.appTextPrimary)
-                    .lineLimit(1)
-                Text("\(formatDistance(walk.distance)) • \(formatDuration(walk.duration))")
-                    .font(.caption)
-                    .foregroundColor(.appTextSecondary)
-            }
-
-            Spacer()
-
-            Text(shortDate(walk.startTime))
-                .font(.caption2)
-                .foregroundColor(.appTextSecondary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(Color.appSurface)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
         }
-        .padding(12)
-        .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .buttonStyle(.plain)
+        .sheet(isPresented: $show) {
+            WalkDetailSheet(walk: walk)
+        }
     }
 
     private func shortDate(_ iso: String) -> String {
         let f = ISO8601DateFormatter()
         f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         var date = f.date(from: iso)
-        if date == nil {
-            f.formatOptions = [.withInternetDateTime]
-            date = f.date(from: iso)
-        }
+        if date == nil { f.formatOptions = [.withInternetDateTime]; date = f.date(from: iso) }
         guard let date else { return "" }
         let df = DateFormatter()
         df.dateFormat = "MMM d"

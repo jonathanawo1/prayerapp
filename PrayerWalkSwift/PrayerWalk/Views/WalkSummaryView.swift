@@ -11,105 +11,144 @@ struct WalkSummaryView: View {
     @EnvironmentObject var profileVM: ProfileViewModel
     @EnvironmentObject var walksVM: WalksViewModel
 
-    @State private var title: String = ""
-    @State private var prayerNotes: String = ""
-    @State private var isSaving: Bool = false
+    @State private var title = ""
+    @State private var prayerNotes = ""
+    @State private var isSaving = false
     @State private var errorMessage: String?
-    @State private var saved: Bool = false
+    @State private var celebrationScale: CGFloat = 0.3
+    @State private var celebrationOpacity: Double = 0
 
     @Environment(\.dismiss) var dismiss
 
     var body: some View {
-        NavigationView {
-            ZStack {
-                Color.appBackground.ignoresSafeArea()
+        ZStack {
+            Color.appBackground.ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // Header badge
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 0) {
+                    // Hero celebration section
+                    ZStack {
+                        // Gradient background
+                        LinearGradient(
+                            colors: [Color(hex: "1A0A05"), Color.appBackground],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 280)
+
+                        // Concentric glow rings
                         ZStack {
                             Circle()
-                                .fill(Color.appPrimary.opacity(0.15))
-                                .frame(width: 80, height: 80)
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 48))
-                                .foregroundColor(.appPrimary)
+                                .fill(Color.appPrimary.opacity(0.05))
+                                .frame(width: 220, height: 220)
+                            Circle()
+                                .fill(Color.appPrimary.opacity(0.08))
+                                .frame(width: 160, height: 160)
+                            Circle()
+                                .fill(Color.appPrimary.opacity(0.12))
+                                .frame(width: 110, height: 110)
+
+                            // Icon
+                            Image(systemName: "figure.walk.circle.fill")
+                                .font(.system(size: 64))
+                                .foregroundStyle(Color.appPrimary)
+                                .scaleEffect(celebrationScale)
+                                .opacity(celebrationOpacity)
                         }
-                        .padding(.top, 24)
 
-                        Text("Walk Complete!")
-                            .font(.title.bold())
-                            .foregroundColor(.appTextPrimary)
+                        // Text
+                        VStack(spacing: 6) {
+                            Spacer()
+                            Text("Walk Complete!")
+                                .font(.system(size: 28, weight: .black))
+                                .foregroundStyle(Color.appTextPrimary)
+                                .opacity(celebrationOpacity)
+                            Text("Great job. Keep walking in faith.")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundStyle(Color.appTextSecondary)
+                                .opacity(celebrationOpacity)
+                        }
+                        .padding(.bottom, 24)
+                        .frame(height: 280)
+                    }
 
-                        // Stats row
+                    VStack(spacing: 20) {
+                        // Stats bar
                         HStack(spacing: 1) {
-                            SummaryStatBox(label: "Distance", value: formatDistance(draft.distance), icon: "arrow.triangle.swap")
-                            Divider().background(Color.appSeparator)
-                            SummaryStatBox(label: "Duration", value: formatDuration(draft.duration), icon: "clock.fill")
-                            Divider().background(Color.appSeparator)
-                            SummaryStatBox(label: "Pace", value: formatPace(distanceMeters: draft.distance, durationSeconds: draft.duration), icon: "speedometer")
+                            SummaryStatCell(
+                                value: formatDistance(draft.distance),
+                                label: "Distance",
+                                icon: "arrow.left.and.right"
+                            )
+                            Rectangle().fill(Color.appSeparator).frame(width: 1)
+                            SummaryStatCell(
+                                value: formatDuration(draft.duration),
+                                label: "Duration",
+                                icon: "clock.fill"
+                            )
+                            Rectangle().fill(Color.appSeparator).frame(width: 1)
+                            SummaryStatCell(
+                                value: formatPace(distanceMeters: draft.distance, durationSeconds: draft.duration),
+                                label: "Pace",
+                                icon: "bolt.fill"
+                            )
                         }
                         .background(Color.appSurface)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .clipShape(RoundedRectangle(cornerRadius: 18))
                         .padding(.horizontal, 20)
 
-                        // Title field
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Title (Optional)")
-                                .font(.caption.bold())
-                                .foregroundColor(.appTextSecondary)
-
-                            TextField("", text: $title)
-                                .placeholder(when: title.isEmpty) {
-                                    Text("e.g. Morning neighborhood walk").foregroundColor(.appTextSecondary)
-                                }
-                                .padding(14)
-                                .background(Color.appSurface)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .foregroundColor(.appTextPrimary)
-                        }
-                        .padding(.horizontal, 20)
-
-                        // Prayer notes field
-                        VStack(alignment: .leading, spacing: 8) {
-                            Label("Prayer Notes (Optional)", systemImage: "hands.sparkles")
-                                .font(.caption.bold())
-                                .foregroundColor(.appTextSecondary)
-
-                            TextField("", text: $prayerNotes, axis: .vertical)
-                                .placeholder(when: prayerNotes.isEmpty) {
-                                    Text("What did you pray for?").foregroundColor(.appTextSecondary)
-                                }
-                                .lineLimit(4...10)
-                                .padding(14)
-                                .background(Color.appSurface)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                                .foregroundColor(.appTextPrimary)
+                        // Form fields
+                        VStack(spacing: 14) {
+                            SummaryField(
+                                icon: "tag.fill",
+                                placeholder: "Name this walk (optional)",
+                                text: $title,
+                                isMultiline: false
+                            )
+                            SummaryField(
+                                icon: "hands.sparkles.fill",
+                                placeholder: "What did you pray for? (optional)",
+                                text: $prayerNotes,
+                                isMultiline: true
+                            )
                         }
                         .padding(.horizontal, 20)
 
                         if let error = errorMessage {
                             Text(error)
-                                .font(.caption)
-                                .foregroundColor(.appError)
+                                .font(.system(size: 13))
+                                .foregroundStyle(Color.appError)
                                 .padding(.horizontal, 20)
                         }
 
-                        // Buttons
+                        // Save button
                         VStack(spacing: 12) {
                             Button {
                                 Task { await saveDraft() }
                             } label: {
                                 ZStack {
-                                    RoundedRectangle(cornerRadius: 14)
-                                        .fill(Color.appPrimary)
-                                        .frame(height: 52)
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(
+                                            LinearGradient(
+                                                colors: [Color(hex: "FF6B35"), Color.appPrimary],
+                                                startPoint: .topLeading,
+                                                endPoint: .bottomTrailing
+                                            )
+                                        )
+                                        .frame(height: 56)
+                                        .shadow(color: Color.appPrimary.opacity(0.4), radius: 16, x: 0, y: 6)
+
                                     if isSaving {
-                                        ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                        ProgressView()
+                                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
                                     } else {
-                                        Label("Save Walk", systemImage: "square.and.arrow.down")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.white)
+                                        HStack(spacing: 8) {
+                                            Image(systemName: "square.and.arrow.down.fill")
+                                                .font(.system(size: 15, weight: .bold))
+                                            Text("Save Walk")
+                                                .font(.system(size: 17, weight: .black))
+                                        }
+                                        .foregroundStyle(.white)
                                     }
                                 }
                             }
@@ -121,32 +160,32 @@ struct WalkSummaryView: View {
                             } label: {
                                 Text("Discard")
                                     .font(.system(size: 15, weight: .medium))
-                                    .foregroundColor(.appTextSecondary)
+                                    .foregroundStyle(Color.appTextSecondary)
                             }
                         }
                         .padding(.horizontal, 20)
-                        .padding(.bottom, 32)
+                        .padding(.bottom, 48)
                     }
                 }
             }
-            .navigationBarHidden(true)
         }
         .preferredColorScheme(.dark)
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.6).delay(0.1)) {
+                celebrationScale = 1.0
+                celebrationOpacity = 1.0
+            }
+        }
     }
 
     private func saveDraft() async {
         isSaving = true
         errorMessage = nil
-        var updatedDraft = draft
-        updatedDraft.title = title
-        updatedDraft.prayerNotes = prayerNotes
-
+        var d = draft
+        d.title = title.isEmpty ? nil : title
+        d.prayerNotes = prayerNotes.isEmpty ? nil : prayerNotes
         do {
-            _ = try await walksVM.saveWalk(
-                draft: updatedDraft,
-                userId: authVM.userId,
-                groupId: profileVM.profile?.groupId
-            )
+            _ = try await walksVM.saveWalk(draft: d, userId: authVM.userId, groupId: profileVM.profile?.groupId)
             dismiss()
             onDismiss()
         } catch {
@@ -156,33 +195,74 @@ struct WalkSummaryView: View {
     }
 }
 
-private struct SummaryStatBox: View {
-    let label: String
+// MARK: - Summary Stat Cell
+
+private struct SummaryStatCell: View {
     let value: String
+    let label: String
     let icon: String
 
     var body: some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
-                .font(.system(size: 14))
-                .foregroundColor(.appPrimary)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(Color.appPrimary)
             Text(value)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
-                .foregroundColor(.appTextPrimary)
+                .font(.system(size: 17, weight: .black, design: .rounded))
+                .foregroundStyle(Color.appTextPrimary)
             Text(label)
-                .font(.caption2)
-                .foregroundColor(.appTextSecondary)
+                .font(.system(size: 10, weight: .semibold))
+                .foregroundStyle(Color.appTextSecondary)
+                .textCase(.uppercase)
+                .tracking(0.5)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
+        .padding(.vertical, 18)
     }
 }
 
-private extension View {
-    func placeholder<Content: View>(when shouldShow: Bool, @ViewBuilder placeholder: () -> Content) -> some View {
-        ZStack(alignment: .leading) {
-            if shouldShow { placeholder().padding(.horizontal, 14) }
-            self
+// MARK: - Summary Field
+
+private struct SummaryField: View {
+    let icon: String
+    let placeholder: String
+    @Binding var text: String
+    let isMultiline: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(Color.appPrimary)
+                .frame(width: 20)
+                .padding(.top, isMultiline ? 1 : 0)
+
+            ZStack(alignment: .topLeading) {
+                if text.isEmpty {
+                    Text(placeholder)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.appTextSecondary.opacity(0.5))
+                }
+                if isMultiline {
+                    TextField("", text: $text, axis: .vertical)
+                        .lineLimit(3...8)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.appTextPrimary)
+                        .tint(.appPrimary)
+                } else {
+                    TextField("", text: $text)
+                        .font(.system(size: 15))
+                        .foregroundStyle(Color.appTextPrimary)
+                        .tint(.appPrimary)
+                }
+            }
         }
+        .padding(16)
+        .background(Color.appSurface)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(
+            RoundedRectangle(cornerRadius: 14)
+                .strokeBorder(Color.white.opacity(0.06), lineWidth: 1)
+        )
     }
 }
