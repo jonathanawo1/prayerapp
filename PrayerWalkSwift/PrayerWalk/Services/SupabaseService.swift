@@ -39,7 +39,7 @@ final class SupabaseService: ObservableObject {
     static let shared = SupabaseService()
 
     private let supabaseURL = "https://zzhvuoylsanybhcvxtsq.supabase.co"
-    private let anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp6aHZ1b3lsc2FueWJoY3Z4dHNxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgzNTgwMjQsImV4cCI6MjA2MzkzNDAyNH0.cmJbXMKxVbdXSHqp1eL0vWMRxf1vALxKm1xjJQPq22A"
+    private let anonKey = "sb_publishable_Kdm8x4LsFvNPiz8hRM5_gA_Ur4hOB9P"
 
     private let defaults = UserDefaults.standard
     private let keyAccessToken = "pw_access_token"
@@ -213,6 +213,23 @@ final class SupabaseService: ObservableObject {
         let arr = try decoder.decode([Response].self, from: data)
         guard let first = arr.first else { throw AppError.serverError("Empty patch response") }
         return first
+    }
+
+    // MARK: - Storage
+
+    func uploadWalkPhoto(imageData: Data, userId: String) async throws -> String {
+        guard let token = accessToken else { throw AppError.notAuthenticated }
+        let fileName = "\(userId)/\(UUID().uuidString).jpg"
+        let url = URL(string: "\(supabaseURL)/storage/v1/object/walk-photos/\(fileName)")!
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue(anonKey, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        req.httpBody = imageData
+        let (data, response) = try await session.data(for: req)
+        try validateResponse(response, data: data)
+        return "\(supabaseURL)/storage/v1/object/public/walk-photos/\(fileName)"
     }
 
     // MARK: - Walks

@@ -9,6 +9,7 @@ import CoreLocation
 final class ActiveWalkViewModel: ObservableObject {
     @Published var isRecording: Bool = false
     @Published var isPaused: Bool = false
+    @Published var isWarmingUp: Bool = true
     @Published var duration: TimeInterval = 0
     @Published var distance: Double = 0
     @Published var path: [WalkCoordinate] = []
@@ -36,6 +37,7 @@ final class ActiveWalkViewModel: ObservableObject {
         startDate = Date()
         isRecording = true
         isPaused = false
+        isWarmingUp = true
 
         locationService.resetPath()
         locationService.requestPermission()
@@ -100,10 +102,20 @@ final class ActiveWalkViewModel: ObservableObject {
             .compactMap { $0 }
             .sink { [weak self] location in
                 guard let self, self.isRecording, !self.isPaused else { return }
+                // Stay in warm-up until GPS accuracy is ≤ 15m
+                if self.isWarmingUp {
+                    if location.horizontalAccuracy > 0, location.horizontalAccuracy <= 15 {
+                        self.isWarmingUp = false
+                        let coord = WalkCoordinate(from: location)
+                        self.path.append(coord)
+                        self.lastRecordedCoord = coord
+                    }
+                    return
+                }
                 let coord = WalkCoordinate(from: location)
                 if let last = self.lastRecordedCoord {
                     let delta = haversineDistance(from: last, to: coord)
-                    if delta > 2 { // only record if moved more than 2m
+                    if delta > 2 {
                         self.path.append(coord)
                         self.distance += delta
                         self.lastRecordedCoord = coord

@@ -2,6 +2,7 @@
 // PrayerWalk
 
 import SwiftUI
+import PhotosUI
 
 struct WalkSummaryView: View {
     let draft: WalkDraft
@@ -17,6 +18,8 @@ struct WalkSummaryView: View {
     @State private var errorMessage: String?
     @State private var celebrationScale: CGFloat = 0.3
     @State private var celebrationOpacity: Double = 0
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var selectedImage: UIImage?
 
     @Environment(\.dismiss) var dismiss
 
@@ -111,6 +114,62 @@ struct WalkSummaryView: View {
                                 text: $prayerNotes,
                                 isMultiline: true
                             )
+
+                            // Photo picker
+                            PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                                HStack(spacing: 12) {
+                                    if let img = selectedImage {
+                                        Image(uiImage: img)
+                                            .resizable()
+                                            .scaledToFill()
+                                            .frame(width: 52, height: 52)
+                                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                                    } else {
+                                        ZStack {
+                                            RoundedRectangle(cornerRadius: 10)
+                                                .fill(Color.appBackground)
+                                                .frame(width: 52, height: 52)
+                                            Image(systemName: "camera.fill")
+                                                .font(.system(size: 20))
+                                                .foregroundStyle(Color.appPrimary)
+                                        }
+                                    }
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(selectedImage == nil ? "Add a Photo" : "Photo Selected")
+                                            .font(.system(size: 15, weight: .semibold))
+                                            .foregroundStyle(Color.appTextPrimary)
+                                        Text(selectedImage == nil ? "Optional — share a moment from your walk" : "Tap to change")
+                                            .font(.system(size: 12))
+                                            .foregroundStyle(Color.appTextSecondary)
+                                    }
+                                    Spacer()
+                                    if selectedImage != nil {
+                                        Button {
+                                            selectedImage = nil
+                                            selectedPhotoItem = nil
+                                        } label: {
+                                            Image(systemName: "xmark.circle.fill")
+                                                .font(.system(size: 20))
+                                                .foregroundStyle(Color.appTextSecondary.opacity(0.5))
+                                        }
+                                    }
+                                }
+                                .padding(14)
+                                .background(Color.appSurface)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 14)
+                                        .strokeBorder(Color.white.opacity(0.06), lineWidth: 1)
+                                )
+                            }
+                            .onChange(of: selectedPhotoItem) { item in
+                                Task {
+                                    if let data = try? await item?.loadTransferable(type: Data.self),
+                                       let img = UIImage(data: data) {
+                                        selectedImage = img
+                                    }
+                                }
+                            }
                         }
                         .padding(.horizontal, 20)
 
@@ -184,6 +243,11 @@ struct WalkSummaryView: View {
         var d = draft
         d.title = title
         d.prayerNotes = prayerNotes
+        // Upload photo if one was selected
+        if let img = selectedImage,
+           let jpeg = img.jpegData(compressionQuality: 0.8) {
+            d.photoUrl = try? await SupabaseService.shared.uploadWalkPhoto(imageData: jpeg, userId: authVM.userId)
+        }
         do {
             _ = try await walksVM.saveWalk(draft: d, userId: authVM.userId, groupId: profileVM.profile?.groupId)
             dismiss()

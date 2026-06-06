@@ -27,7 +27,7 @@ struct GroupView: View {
                     NoGroupView(showCreate: $showCreateSheet, showJoin: $showJoinSheet)
                 }
             }
-            .navigationTitle("Prayer Club")
+            .navigationTitle("Prayer Branch")
             .navigationBarTitleDisplayMode(.large)
             .sheet(isPresented: $showCreateSheet) { CreateGroupSheet() }
             .sheet(isPresented: $showJoinSheet) { JoinGroupSheet() }
@@ -56,12 +56,12 @@ private struct NoGroupView: View {
             }
             .padding(.bottom, 24)
 
-            Text("No Club Yet")
+            Text("No Branch Yet")
                 .font(.system(size: 24, weight: .black))
                 .foregroundStyle(Color.appTextPrimary)
                 .padding(.bottom, 8)
 
-            Text("Create a club or join one\nwith an invite code to pray together.")
+            Text("Create a branch or join one\nwith an invite code to pray together.")
                 .font(.system(size: 15))
                 .foregroundStyle(Color.appTextSecondary)
                 .multilineTextAlignment(.center)
@@ -73,7 +73,7 @@ private struct NoGroupView: View {
                     HStack(spacing: 10) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 17))
-                        Text("Create a Club")
+                        Text("Create a Branch")
                             .font(.system(size: 17, weight: .bold))
                     }
                     .foregroundStyle(.white)
@@ -250,7 +250,7 @@ private struct GroupDetailView: View {
                     } label: {
                         HStack {
                             Image(systemName: "rectangle.portrait.and.arrow.right")
-                            Text("Leave Club")
+                            Text("Leave Branch")
                         }
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(Color.appError)
@@ -364,8 +364,8 @@ private struct CreateGroupSheet: View {
                 Color.appBackground.ignoresSafeArea()
 
                 VStack(spacing: 20) {
-                    GroupFormField(icon: "tag.fill", placeholder: "Club name", text: $name, isMultiline: false)
-                    GroupFormField(icon: "text.alignleft", placeholder: "What is this club about?", text: $description, isMultiline: true)
+                    GroupFormField(icon: "tag.fill", placeholder: "Branch name", text: $name, isMultiline: false)
+                    GroupFormField(icon: "text.alignleft", placeholder: "What is this branch about?", text: $description, isMultiline: true)
 
                     if let error = groupVM.errorMessage {
                         Text(error).font(.caption).foregroundStyle(Color.appError)
@@ -374,7 +374,7 @@ private struct CreateGroupSheet: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("Create Club")
+            .navigationTitle("Create Branch")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -455,7 +455,7 @@ private struct JoinGroupSheet: View {
                 }
                 .padding(20)
             }
-            .navigationTitle("Join Club")
+            .navigationTitle("Join Branch")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {

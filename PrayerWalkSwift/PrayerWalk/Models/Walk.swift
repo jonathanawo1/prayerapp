@@ -14,6 +14,7 @@ struct Walk: Codable, Identifiable {
     let duration: Int
     let title: String?
     let prayerNotes: String?
+    let photoUrl: String?
     let createdAt: String?
 
     enum CodingKeys: String, CodingKey {
@@ -27,6 +28,7 @@ struct Walk: Codable, Identifiable {
         case duration
         case title
         case prayerNotes = "prayer_notes"
+        case photoUrl = "photo_url"
         case createdAt = "created_at"
     }
 }
@@ -43,6 +45,7 @@ struct WalkInsert: Encodable {
     let duration: Int
     let title: String?
     let prayerNotes: String?
+    let photoUrl: String?
 
     enum CodingKeys: String, CodingKey {
         case userId = "user_id"
@@ -54,6 +57,7 @@ struct WalkInsert: Encodable {
         case duration
         case title
         case prayerNotes = "prayer_notes"
+        case photoUrl = "photo_url"
     }
 }
 
@@ -67,6 +71,7 @@ struct WalkDraft {
     var duration: Int
     var title: String
     var prayerNotes: String
+    var photoUrl: String?
 
     static let isoFormatter: ISO8601DateFormatter = {
         let f = ISO8601DateFormatter()
@@ -84,7 +89,8 @@ struct WalkDraft {
             distance: distance,
             duration: duration,
             title: title.isEmpty ? nil : title,
-            prayerNotes: prayerNotes.isEmpty ? nil : prayerNotes
+            prayerNotes: prayerNotes.isEmpty ? nil : prayerNotes,
+            photoUrl: photoUrl
         )
     }
 }

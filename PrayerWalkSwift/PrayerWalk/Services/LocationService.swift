@@ -31,6 +31,7 @@ final class LocationService: NSObject, ObservableObject {
     func startTracking() {
         guard !isTracking else { return }
         isTracking = true
+        manager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
         manager.startUpdatingLocation()
     }
 
@@ -49,10 +50,14 @@ final class LocationService: NSObject, ObservableObject {
 extension LocationService: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        // Filter out inaccurate readings
-        guard location.horizontalAccuracy < 50, location.horizontalAccuracy >= 0 else { return }
-        currentLocation = location
-        if isTracking {
+        guard location.horizontalAccuracy >= 0 else { return }
+        // Always update the displayed blue dot with best available fix
+        if location.horizontalAccuracy < 100 {
+            currentLocation = location
+        }
+        // Only record path points when accuracy is good enough (< 20m)
+        if isTracking, location.horizontalAccuracy < 20,
+           location.timestamp.timeIntervalSinceNow > -5 {
             let coord = WalkCoordinate(from: location)
             path.append(coord)
         }
