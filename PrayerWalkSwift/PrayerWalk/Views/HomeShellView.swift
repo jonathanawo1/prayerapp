@@ -14,6 +14,13 @@ struct HomeShellView: View {
     @State private var showActiveWalk: Bool = false
     @State private var fabPressed = false
 
+    // When in a branch, filter map to only that branch's walks
+    private var branchWalks: [Walk] {
+        guard groupVM.group != nil, !groupVM.members.isEmpty else { return walksVM.walks }
+        let memberIds = Set(groupVM.members.map(\.id))
+        return walksVM.walks.filter { memberIds.contains($0.userId) }
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
@@ -23,7 +30,7 @@ struct HomeShellView: View {
                     }
                     .tag(0)
 
-                CommunityMapView(walks: walksVM.walks)
+                CommunityMapView(walks: branchWalks)
                     .tabItem {
                         Label("Map", systemImage: selectedTab == 1 ? "map.fill" : "map")
                     }

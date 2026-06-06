@@ -215,6 +215,23 @@ final class SupabaseService: ObservableObject {
         return first
     }
 
+    // MARK: - Storage
+
+    func uploadWalkPhoto(imageData: Data, userId: String) async throws -> String {
+        guard let token = accessToken else { throw AppError.notAuthenticated }
+        let fileName = "\(userId)/\(UUID().uuidString).jpg"
+        let url = URL(string: "\(supabaseURL)/storage/v1/object/walk-photos/\(fileName)")!
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue(anonKey, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        req.httpBody = imageData
+        let (data, response) = try await session.data(for: req)
+        try validateResponse(response, data: data)
+        return "\(supabaseURL)/storage/v1/object/public/walk-photos/\(fileName)"
+    }
+
     // MARK: - Walks
 
     func walksFetch() async throws -> [Walk] {
