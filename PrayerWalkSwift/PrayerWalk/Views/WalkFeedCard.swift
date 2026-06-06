@@ -186,9 +186,11 @@ struct MapSnapshotView: View {
         options.size = CGSize(width: UIScreen.main.bounds.width, height: 220)
         options.traitCollection = UITraitCollection(userInterfaceStyle: .dark)
 
-        let config = MKStandardMapConfiguration(emphasisStyle: .muted)
-        config.showsTraffic = false
-        options.preferredConfiguration = config
+        if #available(iOS 17.0, *) {
+            let config = MKStandardMapConfiguration(emphasisStyle: .muted)
+            config.showsTraffic = false
+            options.preferredConfiguration = config
+        }
 
         do {
             let snapshot = try await MKMapSnapshotter(options: options).start()
@@ -253,9 +255,11 @@ struct RouteMapView: UIViewRepresentable {
         let m = MKMapView()
         m.delegate = context.coordinator
         m.overrideUserInterfaceStyle = .dark
-        let cfg = MKStandardMapConfiguration(emphasisStyle: .muted)
-        cfg.showsTraffic = false
-        m.preferredConfiguration = cfg
+        if #available(iOS 17.0, *) {
+            let cfg = MKStandardMapConfiguration(emphasisStyle: .muted)
+            cfg.showsTraffic = false
+            m.preferredConfiguration = cfg
+        }
         m.isZoomEnabled = true
         m.isScrollEnabled = true
         return m

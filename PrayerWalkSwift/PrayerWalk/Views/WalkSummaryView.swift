@@ -182,8 +182,8 @@ struct WalkSummaryView: View {
         isSaving = true
         errorMessage = nil
         var d = draft
-        d.title = title.isEmpty ? nil : title
-        d.prayerNotes = prayerNotes.isEmpty ? nil : prayerNotes
+        d.title = title
+        d.prayerNotes = prayerNotes
         do {
             _ = try await walksVM.saveWalk(draft: d, userId: authVM.userId, groupId: profileVM.profile?.groupId)
             dismiss()
