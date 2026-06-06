@@ -1,0 +1,548 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA000101 /* PrayerWalkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000001 /* PrayerWalkApp.swift */; };
+		AA000102 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000002 /* ContentView.swift */; };
+		AA000103 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000003 /* AppColors.swift */; };
+		AA000104 /* Distance.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000004 /* Distance.swift */; };
+		AA000105 /* WalkCoordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000005 /* WalkCoordinate.swift */; };
+		AA000106 /* Walk.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000006 /* Walk.swift */; };
+		AA000107 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000007 /* Profile.swift */; };
+		AA000108 /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000008 /* Group.swift */; };
+		AA000109 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000009 /* SupabaseService.swift */; };
+		AA000110 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000010 /* LocationService.swift */; };
+		AA000111 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000011 /* AuthViewModel.swift */; };
+		AA000112 /* WalksViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000012 /* WalksViewModel.swift */; };
+		AA000113 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000013 /* ProfileViewModel.swift */; };
+		AA000114 /* GroupViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000014 /* GroupViewModel.swift */; };
+		AA000115 /* ActiveWalkViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000015 /* ActiveWalkViewModel.swift */; };
+		AA000116 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000016 /* AuthView.swift */; };
+		AA000117 /* HomeShellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000017 /* HomeShellView.swift */; };
+		AA000118 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000018 /* FeedView.swift */; };
+		AA000119 /* WalkFeedCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000019 /* WalkFeedCard.swift */; };
+		AA000120 /* CommunityMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000020 /* CommunityMapView.swift */; };
+		AA000121 /* GroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000021 /* GroupView.swift */; };
+		AA000122 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000022 /* ProfileView.swift */; };
+		AA000123 /* ActiveWalkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000023 /* ActiveWalkView.swift */; };
+		AA000124 /* WalkSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000024 /* WalkSummaryView.swift */; };
+		AA000125 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA000025 /* Assets.xcassets */; };
+		AA000126 /* PrayerWalkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000026 /* PrayerWalkTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		AA000001 /* PrayerWalkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerWalkApp.swift; sourceTree = "<group>"; };
+		AA000002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		AA000003 /* AppColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppColors.swift; sourceTree = "<group>"; };
+		AA000004 /* Distance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Distance.swift; sourceTree = "<group>"; };
+		AA000005 /* WalkCoordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkCoordinate.swift; sourceTree = "<group>"; };
+		AA000006 /* Walk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Walk.swift; sourceTree = "<group>"; };
+		AA000007 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		AA000008 /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
+		AA000009 /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
+		AA000010 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		AA000011 /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
+		AA000012 /* WalksViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalksViewModel.swift; sourceTree = "<group>"; };
+		AA000013 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
+		AA000014 /* GroupViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupViewModel.swift; sourceTree = "<group>"; };
+		AA000015 /* ActiveWalkViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWalkViewModel.swift; sourceTree = "<group>"; };
+		AA000016 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		AA000017 /* HomeShellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeShellView.swift; sourceTree = "<group>"; };
+		AA000018 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
+		AA000019 /* WalkFeedCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkFeedCard.swift; sourceTree = "<group>"; };
+		AA000020 /* CommunityMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunityMapView.swift; sourceTree = "<group>"; };
+		AA000021 /* GroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupView.swift; sourceTree = "<group>"; };
+		AA000022 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		AA000023 /* ActiveWalkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveWalkView.swift; sourceTree = "<group>"; };
+		AA000024 /* WalkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkSummaryView.swift; sourceTree = "<group>"; };
+		AA000025 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		AA000026 /* PrayerWalkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerWalkTests.swift; sourceTree = "<group>"; };
+		AA000027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA000090 /* PrayerWalk.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrayerWalk.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA000091 /* PrayerWalkTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PrayerWalkTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		AA000200 /* PrayerWalk */ = {
+			isa = PBXGroup;
+			children = (
+				AA000001 /* PrayerWalkApp.swift */,
+				AA000002 /* ContentView.swift */,
+				AA000025 /* Assets.xcassets */,
+				AA000027 /* Info.plist */,
+				AA000210 /* Utils */,
+				AA000220 /* Models */,
+				AA000230 /* Services */,
+				AA000240 /* ViewModels */,
+				AA000250 /* Views */,
+			);
+			path = PrayerWalk;
+			sourceTree = "<group>";
+		};
+		AA000210 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				AA000003 /* AppColors.swift */,
+				AA000004 /* Distance.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
+		AA000220 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				AA000005 /* WalkCoordinate.swift */,
+				AA000006 /* Walk.swift */,
+				AA000007 /* Profile.swift */,
+				AA000008 /* Group.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AA000230 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				AA000009 /* SupabaseService.swift */,
+				AA000010 /* LocationService.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		AA000240 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				AA000011 /* AuthViewModel.swift */,
+				AA000012 /* WalksViewModel.swift */,
+				AA000013 /* ProfileViewModel.swift */,
+				AA000014 /* GroupViewModel.swift */,
+				AA000015 /* ActiveWalkViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		AA000250 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA000016 /* AuthView.swift */,
+				AA000017 /* HomeShellView.swift */,
+				AA000018 /* FeedView.swift */,
+				AA000019 /* WalkFeedCard.swift */,
+				AA000020 /* CommunityMapView.swift */,
+				AA000021 /* GroupView.swift */,
+				AA000022 /* ProfileView.swift */,
+				AA000023 /* ActiveWalkView.swift */,
+				AA000024 /* WalkSummaryView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AA000260 /* PrayerWalkTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA000026 /* PrayerWalkTests.swift */,
+			);
+			path = PrayerWalkTests;
+			sourceTree = "<group>";
+		};
+		AA000270 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA000090 /* PrayerWalk.app */,
+				AA000091 /* PrayerWalkTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA000280 /* MainGroup */ = {
+			isa = PBXGroup;
+			children = (
+				AA000200 /* PrayerWalk */,
+				AA000260 /* PrayerWalkTests */,
+				AA000270 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA000300 /* PrayerWalk */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000700 /* Build configuration list for PBXNativeTarget "PrayerWalk" */;
+			buildPhases = (
+				AA000400 /* Sources */,
+				AA000401 /* Resources */,
+				AA000402 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PrayerWalk;
+			productName = PrayerWalk;
+			productReference = AA000090 /* PrayerWalk.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA000301 /* PrayerWalkTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA000701 /* Build configuration list for PBXNativeTarget "PrayerWalkTests" */;
+			buildPhases = (
+				AA000403 /* Sources */,
+				AA000404 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA000500 /* PBXTargetDependency */,
+			);
+			name = PrayerWalkTests;
+			productName = PrayerWalkTests;
+			productReference = AA000091 /* PrayerWalkTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA000600 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					AA000300 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					AA000301 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = AA000300;
+					};
+				};
+			};
+			buildConfigurationList = AA000702 /* Build configuration list for PBXProject "PrayerWalk" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA000280 /* MainGroup */;
+			productRefGroup = AA000270 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA000300 /* PrayerWalk */,
+				AA000301 /* PrayerWalkTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA000400 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000101 /* PrayerWalkApp.swift in Sources */,
+				AA000102 /* ContentView.swift in Sources */,
+				AA000103 /* AppColors.swift in Sources */,
+				AA000104 /* Distance.swift in Sources */,
+				AA000105 /* WalkCoordinate.swift in Sources */,
+				AA000106 /* Walk.swift in Sources */,
+				AA000107 /* Profile.swift in Sources */,
+				AA000108 /* Group.swift in Sources */,
+				AA000109 /* SupabaseService.swift in Sources */,
+				AA000110 /* LocationService.swift in Sources */,
+				AA000111 /* AuthViewModel.swift in Sources */,
+				AA000112 /* WalksViewModel.swift in Sources */,
+				AA000113 /* ProfileViewModel.swift in Sources */,
+				AA000114 /* GroupViewModel.swift in Sources */,
+				AA000115 /* ActiveWalkViewModel.swift in Sources */,
+				AA000116 /* AuthView.swift in Sources */,
+				AA000117 /* HomeShellView.swift in Sources */,
+				AA000118 /* FeedView.swift in Sources */,
+				AA000119 /* WalkFeedCard.swift in Sources */,
+				AA000120 /* CommunityMapView.swift in Sources */,
+				AA000121 /* GroupView.swift in Sources */,
+				AA000122 /* ProfileView.swift in Sources */,
+				AA000123 /* ActiveWalkView.swift in Sources */,
+				AA000124 /* WalkSummaryView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000401 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000125 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000402 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000403 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA000126 /* PrayerWalkTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA000404 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA000500 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA000300 /* PrayerWalk */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		AA000610 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA000611 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA000620 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PrayerWalk/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prayerwalk.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		AA000621 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = PrayerWalk/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prayerwalk.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		AA000630 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prayerwalk.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PrayerWalk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PrayerWalk";
+			};
+			name = Debug;
+		};
+		AA000631 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "";
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.prayerwalk.app.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PrayerWalk.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/PrayerWalk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA000700 /* Build configuration list for PBXNativeTarget "PrayerWalk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000620 /* Debug */,
+				AA000621 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000701 /* Build configuration list for PBXNativeTarget "PrayerWalkTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000630 /* Debug */,
+				AA000631 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA000702 /* Build configuration list for PBXProject "PrayerWalk" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA000610 /* Debug */,
+				AA000611 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = AA000600 /* Project object */;
+}
