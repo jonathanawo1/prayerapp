@@ -8,6 +8,7 @@ import Combine
 final class AuthViewModel: ObservableObject {
     @Published var isAuthenticated: Bool = false
     @Published var userId: String = ""
+    @Published var email: String = ""
     @Published var isLoading: Bool = false
     @Published var errorMessage: String?
 
@@ -16,6 +17,7 @@ final class AuthViewModel: ObservableObject {
     func checkSession() {
         isAuthenticated = supabase.restoreSession()
         userId = supabase.userId ?? ""
+        email = supabase.userEmail ?? ""
     }
 
     func signIn(email: String, password: String) async {
@@ -25,6 +27,7 @@ final class AuthViewModel: ObservableObject {
         do {
             try await supabase.signIn(email: email, password: password)
             userId = supabase.userId ?? ""
+            self.email = email
             isAuthenticated = true
         } catch {
             errorMessage = error.localizedDescription
@@ -38,6 +41,7 @@ final class AuthViewModel: ObservableObject {
         do {
             try await supabase.signUp(email: email, password: password)
             userId = supabase.userId ?? ""
+            self.email = email
             isAuthenticated = true
         } catch {
             errorMessage = error.localizedDescription
