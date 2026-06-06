@@ -31,7 +31,7 @@ struct HomeShellView: View {
 
                 GroupView()
                     .tabItem {
-                        Label("Club", systemImage: selectedTab == 2 ? "person.3.fill" : "person.3")
+                        Label("Branch", systemImage: selectedTab == 2 ? "person.3.fill" : "person.3")
                     }
                     .tag(2)
 

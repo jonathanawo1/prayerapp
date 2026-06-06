@@ -54,7 +54,18 @@ struct ActiveWalkView: View {
                     .padding(.bottom, 20)
 
                     // Paused badge
-                    if walkVM.isPaused {
+                    if walkVM.isWarmingUp {
+                        HStack(spacing: 6) {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle(tint: Color.appTextSecondary))
+                                .scaleEffect(0.7)
+                            Text("ACQUIRING GPS")
+                                .font(.system(size: 11, weight: .black))
+                                .foregroundStyle(Color.appTextSecondary)
+                                .tracking(1.5)
+                        }
+                        .padding(.bottom, 12)
+                    } else if walkVM.isPaused {
                         HStack(spacing: 6) {
                             Circle()
                                 .fill(Color.appWarning)
@@ -70,7 +81,6 @@ struct ActiveWalkView: View {
                         }
                         .padding(.bottom, 12)
                     } else {
-                        // Recording indicator
                         HStack(spacing: 6) {
                             Circle()
                                 .fill(Color.appPrimary)
