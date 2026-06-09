@@ -162,7 +162,10 @@ struct AuthView: View {
                     .background(
                         RoundedRectangle(cornerRadius: 24)
                             .fill(Color(hex: "1A2740").opacity(0.9))
-                            .strokeBorder(Color.white.opacity(0.07), lineWidth: 1)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 24)
+                                    .strokeBorder(Color.white.opacity(0.07), lineWidth: 1)
+                            )
                     )
                     .padding(.horizontal, 20)
 
@@ -280,9 +283,12 @@ private struct PremiumTextField: View {
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.appBackground.opacity(0.7))
-                .strokeBorder(
-                    isFocused ? Color.appPrimary.opacity(0.5) : Color.white.opacity(0.07),
-                    lineWidth: 1
+                .overlay(
+                    RoundedRectangle(cornerRadius: 12)
+                        .strokeBorder(
+                            isFocused ? Color.appPrimary.opacity(0.5) : Color.white.opacity(0.07),
+                            lineWidth: 1
+                        )
                 )
         )
         .animation(.easeInOut(duration: 0.2), value: isFocused)
