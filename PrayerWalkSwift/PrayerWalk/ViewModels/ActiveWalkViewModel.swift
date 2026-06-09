@@ -73,7 +73,6 @@ final class ActiveWalkViewModel: ObservableObject {
         locationService.stopTracking()
         locationCancellable?.cancel()
 
-        let totalDuration = accumulatedDuration + (isPaused ? 0 : startDate.distance(to: Date()))
         let draft = WalkDraft(
             startTime: startDate,
             endTime: Date(),
