@@ -343,6 +343,21 @@ final class SupabaseService: ObservableObject {
         try validateResponse(response, data: data)
     }
 
+    func deleteGroup(id: String) async throws {
+        // First remove all members from the group
+        let req1 = try authedRequest(method: "PATCH", path: "profiles",
+            queryItems: [URLQueryItem(name: "group_id", value: "eq.\(id)")],
+            body: try encoder.encode(["group_id": String?.none])
+        )
+        _ = try? await session.data(for: req1)
+        // Then delete the group
+        let req2 = try authedRequest(method: "DELETE", path: "groups", queryItems: [
+            URLQueryItem(name: "id", value: "eq.\(id)")
+        ])
+        let (data, response) = try await session.data(for: req2)
+        try validateResponse(response, data: data)
+    }
+
     // MARK: - Group walks
 
     func walksFetchByGroup(groupId: String) async throws -> [Walk] {

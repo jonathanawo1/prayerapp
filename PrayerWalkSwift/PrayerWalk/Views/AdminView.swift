@@ -188,7 +188,7 @@ private struct BranchesAdminTab: View {
             VStack(spacing: 10) {
                 ForEach(groups) { group in
                     let members = profiles.filter { $0.groupId == group.id }
-                    AdminBranchCard(group: group, memberCount: members.count)
+                    AdminBranchCard(group: group, memberCount: members.count, onRefresh: onRefresh)
                         .padding(.horizontal, 16)
                 }
             }
@@ -201,6 +201,8 @@ private struct BranchesAdminTab: View {
 private struct AdminBranchCard: View {
     let group: PrayerGroup
     let memberCount: Int
+    let onRefresh: () async -> Void
+    @State private var confirmDelete = false
 
     var body: some View {
         HStack(spacing: 14) {
@@ -215,10 +217,26 @@ private struct AdminBranchCard: View {
                     .font(.system(size: 12)).foregroundStyle(Color.appTextSecondary)
             }
             Spacer()
+            Button(role: .destructive) { confirmDelete = true } label: {
+                Image(systemName: "trash.fill")
+                    .font(.system(size: 16))
+                    .foregroundStyle(Color.appError.opacity(0.7))
+            }
         }
         .padding(14)
         .background(Color.appSurface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
+        .confirmationDialog("Delete \"\(group.name)\"?", isPresented: $confirmDelete, titleVisibility: .visible) {
+            Button("Delete Branch", role: .destructive) {
+                Task {
+                    try? await SupabaseService.shared.deleteGroup(id: group.id)
+                    await onRefresh()
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This will remove the branch. Members will be unassigned but their walks remain.")
+        }
     }
 }
 
