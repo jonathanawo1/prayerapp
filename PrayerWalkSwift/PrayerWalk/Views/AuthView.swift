@@ -11,6 +11,7 @@ struct AuthView: View {
     @State private var isSignUp = false
     @State private var emailFocused = false
     @State private var passwordFocused = false
+    @State private var showForgotPassword = false
 
     var body: some View {
         ZStack {
@@ -118,6 +119,22 @@ struct AuthView: View {
                             }
                             .foregroundStyle(Color.appError)
                             .padding(.horizontal, 4)
+                        }
+
+                        // Forgot password (sign-in mode only)
+                        if !isSignUp {
+                            Button {
+                                showForgotPassword = true
+                            } label: {
+                                Text("Forgot password?")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundStyle(Color.appPrimary.opacity(0.85))
+                            }
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.top, -4)
+                            .sheet(isPresented: $showForgotPassword) {
+                                ForgotPasswordSheet()
+                            }
                         }
 
                         // CTA
@@ -293,5 +310,122 @@ private struct PremiumTextField: View {
         )
         .animation(.easeInOut(duration: 0.2), value: isFocused)
         .onTapGesture { isFocused = true }
+    }
+}
+
+// MARK: - Forgot Password Sheet
+
+private struct ForgotPasswordSheet: View {
+    @Environment(\.dismiss) var dismiss
+    @State private var email = ""
+    @State private var isLoading = false
+    @State private var sent = false
+    @State private var errorMessage: String?
+
+    var body: some View {
+        ZStack {
+            Color(hex: "0A1628").ignoresSafeArea()
+
+            VStack(spacing: 28) {
+                // Handle
+                Capsule()
+                    .fill(Color.white.opacity(0.15))
+                    .frame(width: 40, height: 4)
+                    .padding(.top, 12)
+
+                VStack(spacing: 8) {
+                    Image(systemName: "envelope.badge.fill")
+                        .font(.system(size: 40))
+                        .foregroundStyle(Color.appPrimary)
+                    Text("Reset Password")
+                        .font(.system(size: 22, weight: .black))
+                        .foregroundStyle(Color.appTextPrimary)
+                    Text("Enter your email and we'll send a reset link.")
+                        .font(.system(size: 14))
+                        .foregroundStyle(Color.appTextSecondary)
+                        .multilineTextAlignment(.center)
+                }
+
+                if sent {
+                    VStack(spacing: 12) {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.system(size: 44))
+                            .foregroundStyle(Color.appSuccess)
+                        Text("Check your email")
+                            .font(.system(size: 17, weight: .bold))
+                            .foregroundStyle(Color.appTextPrimary)
+                        Text("Tap the link in the email to open the reset screen directly in the app.")
+                            .font(.system(size: 13))
+                            .foregroundStyle(Color.appTextSecondary)
+                            .multilineTextAlignment(.center)
+                        Button("Done") { dismiss() }
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundStyle(Color.appPrimary)
+                            .padding(.top, 4)
+                    }
+                } else {
+                    VStack(spacing: 14) {
+                        PremiumTextField(
+                            icon: "envelope",
+                            placeholder: "Email address",
+                            text: $email,
+                            isSecure: false,
+                            keyboardType: .emailAddress
+                        )
+
+                        if let error = errorMessage {
+                            HStack(spacing: 6) {
+                                Image(systemName: "exclamationmark.circle.fill")
+                                    .font(.system(size: 12))
+                                Text(error)
+                                    .font(.system(size: 13))
+                                Spacer()
+                            }
+                            .foregroundStyle(Color.appError)
+                        }
+
+                        Button {
+                            Task { await sendReset() }
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(LinearGradient(
+                                        colors: [Color(hex: "FF6B35"), Color.appPrimary],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    ))
+                                    .frame(height: 52)
+                                if isLoading {
+                                    ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .white))
+                                } else {
+                                    Text("Send Reset Link")
+                                        .font(.system(size: 16, weight: .bold))
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                        }
+                        .disabled(email.isEmpty || isLoading)
+                        .opacity(email.isEmpty ? 0.55 : 1)
+                    }
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal, 24)
+        }
+        .presentationDetents([.medium])
+        .preferredColorScheme(.dark)
+    }
+
+    private func sendReset() async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            try await SupabaseService.shared.sendPasswordReset(email: email)
+            sent = true
+        } catch {
+            errorMessage = error.localizedDescription
+        }
     }
 }

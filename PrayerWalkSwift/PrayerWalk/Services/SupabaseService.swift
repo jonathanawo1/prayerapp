@@ -135,6 +135,30 @@ final class SupabaseService: ObservableObject {
         userEmail = auth.user.email
     }
 
+    func sendPasswordReset(email: String) async throws {
+        let url = URL(string: "\(supabaseURL)/auth/v1/recover")!
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(anonKey, forHTTPHeaderField: "apikey")
+        let body = ["email": email, "redirect_to": "prayerwalk://reset-password"]
+        req.httpBody = try encoder.encode(body)
+        let (data, response) = try await session.data(for: req)
+        try validateResponse(response, data: data)
+    }
+
+    func updatePassword(recoveryToken: String, newPassword: String) async throws {
+        let url = URL(string: "\(supabaseURL)/auth/v1/user")!
+        var req = URLRequest(url: url)
+        req.httpMethod = "PUT"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        req.setValue(anonKey, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(recoveryToken)", forHTTPHeaderField: "Authorization")
+        req.httpBody = try encoder.encode(["password": newPassword])
+        let (data, response) = try await session.data(for: req)
+        try validateResponse(response, data: data)
+    }
+
     func signOut() async throws {
         guard let token = accessToken else { return }
         let url = URL(string: "\(supabaseURL)/auth/v1/logout")!
