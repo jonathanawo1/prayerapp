@@ -13,6 +13,25 @@ final class AuthViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     private let supabase = SupabaseService.shared
+    private var sessionObserver: NSObjectProtocol?
+
+    init() {
+        sessionObserver = NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("pw_session_expired"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.isAuthenticated = false
+            self?.userId = ""
+            self?.email = ""
+        }
+    }
+
+    deinit {
+        if let obs = sessionObserver {
+            NotificationCenter.default.removeObserver(obs)
+        }
+    }
 
     func checkSession() {
         isAuthenticated = supabase.restoreSession()

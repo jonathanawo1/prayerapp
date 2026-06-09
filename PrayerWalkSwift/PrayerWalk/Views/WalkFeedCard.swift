@@ -85,6 +85,21 @@ struct WalkFeedCard: View {
                 }
                 .padding(.vertical, 12)
                 .background(Color.appSurface)
+
+                if walk.photoUrl != nil {
+                    HStack(spacing: 5) {
+                        Image(systemName: "photo.fill")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Color.appPrimary)
+                        Text("Photo attached")
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundStyle(Color.appTextSecondary)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(Color.appSurface)
+                }
             }
         }
         .buttonStyle(.plain)
@@ -372,6 +387,36 @@ struct WalkDetailSheet: View {
                                     .font(.system(size: 15))
                                     .foregroundStyle(Color.appTextPrimary)
                                     .lineSpacing(4)
+                            }
+                            .padding(16)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .background(Color.appSurface)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                        }
+
+                        // Photo
+                        if let photoUrl = walk.photoUrl, let url = URL(string: photoUrl) {
+                            VStack(alignment: .leading, spacing: 10) {
+                                Label("Photo", systemImage: "photo.fill")
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundStyle(Color.appPrimary)
+                                    .textCase(.uppercase)
+                                    .tracking(0.5)
+                                AsyncImage(url: url) { phase in
+                                    switch phase {
+                                    case .success(let image):
+                                        image.resizable()
+                                            .scaledToFit()
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    case .failure:
+                                        EmptyView()
+                                    default:
+                                        RoundedRectangle(cornerRadius: 12)
+                                            .fill(Color.appSurface)
+                                            .frame(height: 200)
+                                            .overlay(ProgressView().tint(.appPrimary))
+                                    }
+                                }
                             }
                             .padding(16)
                             .frame(maxWidth: .infinity, alignment: .leading)

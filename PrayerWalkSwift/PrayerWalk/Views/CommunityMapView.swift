@@ -75,6 +75,8 @@ private struct MapOverlayView: UIViewRepresentable {
             m.preferredConfiguration = cfg
         }
         m.pointOfInterestFilter = .excludingAll
+        m.isZoomEnabled = true
+        m.isScrollEnabled = true
 
         let tap = UITapGestureRecognizer(target: context.coordinator, action: #selector(MapCoordinator.handleTap(_:)))
         m.addGestureRecognizer(tap)
@@ -237,6 +239,9 @@ private struct SelectedWalkPanel: View {
                             .foregroundStyle(Color.appTextSecondary)
                     }
                 }
+                Text(shortDate(walk.startTime))
+                    .font(.system(size: 11))
+                    .foregroundStyle(Color.appTextSecondary.opacity(0.7))
             }
 
             Spacer()
@@ -266,4 +271,16 @@ private struct SelectedWalkPanel: View {
                 )
         )
     }
+}
+
+private func shortDate(_ iso: String) -> String {
+    let f = ISO8601DateFormatter()
+    f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    var date = f.date(from: iso)
+    if date == nil { f.formatOptions = [.withInternetDateTime]; date = f.date(from: iso) }
+    guard let d = date else { return "" }
+    let df = DateFormatter()
+    df.dateStyle = .medium
+    df.timeStyle = .short
+    return df.string(from: d)
 }

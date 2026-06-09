@@ -54,6 +54,16 @@ struct FeedView: View {
             }
             .navigationTitle("Prayer Walks")
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        Task { await walksVM.fetchWalks() }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .foregroundStyle(Color.appPrimary)
+                    }
+                }
+            }
         }
     }
 }

@@ -36,6 +36,18 @@ final class WalksViewModel: ObservableObject {
         }
     }
 
+    func fetchWalksForGroup(groupId: String) async {
+        isLoading = true
+        errorMessage = nil
+        defer { isLoading = false }
+        do {
+            walks = try await supabase.walksFetchByGroup(groupId: groupId)
+            applyFilter()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func saveWalk(draft: WalkDraft, userId: String, groupId: String?) async throws -> Walk {
         let insert = draft.toInsert(userId: userId, groupId: groupId)
         let saved = try await supabase.walkInsert(insert)
