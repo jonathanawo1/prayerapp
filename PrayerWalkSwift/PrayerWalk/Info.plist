@@ -50,5 +50,16 @@
 	</array>
 	<key>UIUserInterfaceStyle</key>
 	<string>Dark</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.prayerwalk.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>prayerwalk</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

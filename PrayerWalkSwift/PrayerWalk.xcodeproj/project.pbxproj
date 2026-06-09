@@ -35,6 +35,7 @@
 		AA000126 /* PrayerWalkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000026 /* PrayerWalkTests.swift */; };
 		AA000127 /* AdminView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000029 /* AdminView.swift */; };
 		AA000128 /* LeaderboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000030 /* LeaderboardView.swift */; };
+		AA000129 /* ResetPasswordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000031 /* ResetPasswordView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -64,6 +65,7 @@
 		AA000024 /* WalkSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalkSummaryView.swift; sourceTree = "<group>"; };
 		AA000029 /* AdminView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdminView.swift; sourceTree = "<group>"; };
 		AA000030 /* LeaderboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardView.swift; sourceTree = "<group>"; };
+		AA000031 /* ResetPasswordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetPasswordView.swift; sourceTree = "<group>"; };
 		AA000025 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AA000026 /* PrayerWalkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrayerWalkTests.swift; sourceTree = "<group>"; };
 		AA000027 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -143,6 +145,7 @@
 				AA000024 /* WalkSummaryView.swift */,
 				AA000029 /* AdminView.swift */,
 				AA000030 /* LeaderboardView.swift */,
+				AA000031 /* ResetPasswordView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 				AA000124 /* WalkSummaryView.swift in Sources */,
 				AA000127 /* AdminView.swift in Sources */,
 				AA000128 /* LeaderboardView.swift in Sources */,
+				AA000129 /* ResetPasswordView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
