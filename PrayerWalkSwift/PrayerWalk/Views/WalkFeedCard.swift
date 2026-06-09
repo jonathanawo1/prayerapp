@@ -86,18 +86,16 @@ struct WalkFeedCard: View {
                 .padding(.vertical, 12)
                 .background(Color.appSurface)
 
-                if walk.photoUrl != nil {
-                    HStack(spacing: 5) {
-                        Image(systemName: "photo.fill")
-                            .font(.system(size: 10))
-                            .foregroundStyle(Color.appPrimary)
-                        Text("Photo attached")
-                            .font(.system(size: 11, weight: .medium))
-                            .foregroundStyle(Color.appTextSecondary)
-                        Spacer()
+                if let photoUrl = walk.photoUrl, let url = URL(string: photoUrl) {
+                    AsyncImage(url: url) { phase in
+                        if case .success(let img) = phase {
+                            img.resizable()
+                                .scaledToFill()
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 220)
+                                .clipped()
+                        }
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
                     .background(Color.appSurface)
                 }
             }
