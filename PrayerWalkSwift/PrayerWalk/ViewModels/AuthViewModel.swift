@@ -19,11 +19,13 @@ final class AuthViewModel: ObservableObject {
         sessionObserver = NotificationCenter.default.addObserver(
             forName: NSNotification.Name("pw_session_expired"),
             object: nil,
-            queue: .main
+            queue: nil
         ) { [weak self] _ in
-            self?.isAuthenticated = false
-            self?.userId = ""
-            self?.email = ""
+            Task { @MainActor [weak self] in
+                self?.isAuthenticated = false
+                self?.userId = ""
+                self?.email = ""
+            }
         }
     }
 
