@@ -15,6 +15,17 @@ struct ProfileView: View {
     @State private var selectedPhotoItem: PhotosPickerItem?
 
     private var userWalks: [Walk] { walksVM.walks.filter { $0.userId == authVM.userId } }
+
+    private var initialsAvatar: some View {
+        ZStack {
+            Circle()
+                .fill(Color.routeColor(for: authVM.userId))
+                .frame(width: 88, height: 88)
+            Text(initials)
+                .font(.system(size: 32, weight: .black))
+                .foregroundStyle(.white)
+        }
+    }
     private var totalDistance: Double { userWalks.reduce(0) { $0 + $1.distance } }
     private var totalDuration: Int { userWalks.reduce(0) { $0 + $1.duration } }
     private var displayName: String { profileVM.profile?.displayName ?? "Walker" }
@@ -41,18 +52,19 @@ struct ProfileView: View {
                                 // Avatar
                                 PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
                                     ZStack {
-                                        if let avatarUrl = profileVM.profile?.avatarUrl, let url = URL(string: avatarUrl) {
+                                        if let avatarUrl = profileVM.profile?.avatarUrl,
+                                           let url = URL(string: avatarUrl) {
                                             AsyncImage(url: url) { phase in
                                                 if case .success(let img) = phase {
                                                     img.resizable().scaledToFill()
                                                         .frame(width: 88, height: 88)
                                                         .clipShape(Circle())
                                                 } else {
-                                                    avatarFallback
+                                                    initialsAvatar
                                                 }
                                             }
                                         } else {
-                                            avatarFallback
+                                            initialsAvatar
                                         }
                                         // Camera overlay badge
                                         Circle()
