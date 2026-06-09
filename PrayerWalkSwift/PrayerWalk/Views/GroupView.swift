@@ -183,6 +183,26 @@ private struct GroupDetailView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 16))
                     .padding(.horizontal, 20)
 
+                    // Leaderboard
+                    NavigationLink(destination: LeaderboardView()) {
+                        HStack {
+                            Image(systemName: "trophy.fill")
+                                .foregroundStyle(Color(hex: "FFD700"))
+                            Text("Leaderboard")
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundStyle(Color.appTextPrimary)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundStyle(Color.appTextSecondary.opacity(0.5))
+                        }
+                        .padding(16)
+                        .background(Color.appSurface)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .padding(.horizontal, 20)
+                    }
+                    .buttonStyle(.plain)
+
                     // Invite code card
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Invite Code")
