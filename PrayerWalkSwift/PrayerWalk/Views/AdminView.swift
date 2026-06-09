@@ -5,7 +5,6 @@ import SwiftUI
 
 struct AdminView: View {
     @EnvironmentObject var authVM: AuthViewModel
-
     @State private var allProfiles: [Profile] = []
     @State private var allGroups: [PrayerGroup] = []
     @State private var allWalks: [Walk] = []
@@ -32,15 +31,13 @@ struct AdminView: View {
 
                     if isLoading {
                         Spacer()
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .appPrimary))
-                            .scaleEffect(1.2)
+                        ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .appPrimary))
                         Spacer()
                     } else {
                         TabView(selection: $selectedTab) {
                             MembersAdminTab(profiles: allProfiles, groups: allGroups, onRefresh: load)
                                 .tag(0)
-                            BranchesAdminTab(groups: allGroups, profiles: allProfiles)
+                            BranchesAdminTab(groups: allGroups, profiles: allProfiles, onRefresh: load)
                                 .tag(1)
                             WalksAdminTab(walks: allWalks, profiles: allProfiles, onRefresh: load)
                                 .tag(2)
@@ -58,22 +55,12 @@ struct AdminView: View {
                             .padding()
                             .background(Color.appError)
                             .clipShape(Capsule())
-                            .padding(.bottom, 80)
+                            .padding()
                     }
                 }
             }
             .navigationTitle("Admin")
             .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        Task { await load() }
-                    } label: {
-                        Image(systemName: "arrow.clockwise")
-                            .foregroundStyle(Color.appPrimary)
-                    }
-                }
-            }
             .onAppear { Task { await load() } }
         }
     }
@@ -96,7 +83,6 @@ struct AdminView: View {
 }
 
 // MARK: - Members Tab
-
 private struct MembersAdminTab: View {
     let profiles: [Profile]
     let groups: [PrayerGroup]
@@ -110,24 +96,9 @@ private struct MembersAdminTab: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 10) {
-                HStack {
-                    Text("\(profiles.count) MEMBERS")
-                        .font(.system(size: 11, weight: .black))
-                        .foregroundStyle(Color.appTextSecondary)
-                        .tracking(0.8)
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 4)
-
                 ForEach(profiles) { profile in
-                    AdminMemberRow(
-                        profile: profile,
-                        groups: groups,
-                        groupName: groupName(for: profile.groupId),
-                        onRefresh: onRefresh
-                    )
-                    .padding(.horizontal, 16)
+                    AdminMemberRow(profile: profile, groups: groups, groupName: groupName(for: profile.groupId), onRefresh: onRefresh)
+                        .padding(.horizontal, 16)
                 }
             }
             .padding(.vertical, 12)
@@ -145,12 +116,9 @@ private struct AdminMemberRow: View {
     var body: some View {
         HStack(spacing: 12) {
             ZStack {
-                Circle()
-                    .fill(Color.routeColor(for: profile.id))
-                    .frame(width: 42, height: 42)
+                Circle().fill(Color.routeColor(for: profile.id)).frame(width: 42, height: 42)
                 Text(String(profile.displayName.prefix(2)).uppercased())
-                    .font(.system(size: 14, weight: .black))
-                    .foregroundStyle(.white)
+                    .font(.system(size: 14, weight: .black)).foregroundStyle(.white)
             }
 
             VStack(alignment: .leading, spacing: 2) {
@@ -162,8 +130,7 @@ private struct AdminMemberRow: View {
                         Text("ADMIN")
                             .font(.system(size: 9, weight: .black))
                             .foregroundStyle(Color.appPrimary)
-                            .padding(.horizontal, 5)
-                            .padding(.vertical, 2)
+                            .padding(.horizontal, 5).padding(.vertical, 2)
                             .background(Color.appPrimary.opacity(0.15))
                             .clipShape(Capsule())
                     }
@@ -177,7 +144,7 @@ private struct AdminMemberRow: View {
 
             Menu {
                 Menu("Move to Branch") {
-                    Button("Remove from Branch", role: .destructive) {
+                    Button("Remove from Branch") {
                         Task {
                             _ = try? await SupabaseService.shared.profileUpdateGroupId(userId: profile.id, groupId: nil)
                             await onRefresh()
@@ -192,8 +159,7 @@ private struct AdminMemberRow: View {
                         }
                     }
                 }
-                Divider()
-                Button(profile.admin ? "Remove Admin Role" : "Make Admin") {
+                Button(profile.admin ? "Remove Admin" : "Make Admin") {
                     Task {
                         _ = try? await SupabaseService.shared.setProfileAdmin(userId: profile.id, isAdmin: !profile.admin)
                         await onRefresh()
@@ -205,35 +171,24 @@ private struct AdminMemberRow: View {
                     .foregroundStyle(Color.appTextSecondary.opacity(0.5))
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 14).padding(.vertical, 12)
         .background(Color.appSurface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 }
 
 // MARK: - Branches Tab
-
 private struct BranchesAdminTab: View {
     let groups: [PrayerGroup]
     let profiles: [Profile]
+    let onRefresh: () async -> Void
 
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 10) {
-                HStack {
-                    Text("\(groups.count) BRANCHES")
-                        .font(.system(size: 11, weight: .black))
-                        .foregroundStyle(Color.appTextSecondary)
-                        .tracking(0.8)
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 4)
-
                 ForEach(groups) { group in
                     let members = profiles.filter { $0.groupId == group.id }
-                    AdminBranchCard(group: group, members: members)
+                    AdminBranchCard(group: group, memberCount: members.count)
                         .padding(.horizontal, 16)
                 }
             }
@@ -245,85 +200,29 @@ private struct BranchesAdminTab: View {
 
 private struct AdminBranchCard: View {
     let group: PrayerGroup
-    let members: [Profile]
-    @State private var expanded = false
+    let memberCount: Int
 
     var body: some View {
-        VStack(spacing: 0) {
-            Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) { expanded.toggle() } } label: {
-                HStack(spacing: 14) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.appPrimary.opacity(0.15))
-                            .frame(width: 46, height: 46)
-                        Image(systemName: "person.3.fill")
-                            .font(.system(size: 18))
-                            .foregroundStyle(Color.appPrimary)
-                    }
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(group.name)
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundStyle(Color.appTextPrimary)
-                        Text("\(members.count) members • \(group.inviteCode)")
-                            .font(.system(size: 12))
-                            .foregroundStyle(Color.appTextSecondary)
-                    }
-                    Spacer()
-                    Image(systemName: expanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(Color.appTextSecondary.opacity(0.5))
-                }
-                .padding(14)
+        HStack(spacing: 14) {
+            ZStack {
+                Circle().fill(Color.appPrimary.opacity(0.15)).frame(width: 46, height: 46)
+                Image(systemName: "person.3.fill").font(.system(size: 18)).foregroundStyle(Color.appPrimary)
             }
-            .buttonStyle(.plain)
-
-            if expanded {
-                Divider()
-                    .background(Color.appSeparator)
-                    .padding(.horizontal, 14)
-
-                VStack(spacing: 8) {
-                    ForEach(members) { member in
-                        HStack(spacing: 10) {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.routeColor(for: member.id))
-                                    .frame(width: 30, height: 30)
-                                Text(String(member.displayName.prefix(1)).uppercased())
-                                    .font(.system(size: 11, weight: .black))
-                                    .foregroundStyle(.white)
-                            }
-                            Text(member.displayName)
-                                .font(.system(size: 13))
-                                .foregroundStyle(Color.appTextPrimary)
-                            Spacer()
-                            if member.admin {
-                                Text("ADMIN")
-                                    .font(.system(size: 9, weight: .black))
-                                    .foregroundStyle(Color.appPrimary)
-                                    .padding(.horizontal, 5).padding(.vertical, 2)
-                                    .background(Color.appPrimary.opacity(0.15))
-                                    .clipShape(Capsule())
-                            }
-                        }
-                    }
-                    if members.isEmpty {
-                        Text("No members")
-                            .font(.system(size: 13))
-                            .foregroundStyle(Color.appTextSecondary)
-                    }
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
+            VStack(alignment: .leading, spacing: 3) {
+                Text(group.name)
+                    .font(.system(size: 14, weight: .bold)).foregroundStyle(Color.appTextPrimary)
+                Text("\(memberCount) members • Code: \(group.inviteCode)")
+                    .font(.system(size: 12)).foregroundStyle(Color.appTextSecondary)
             }
+            Spacer()
         }
+        .padding(14)
         .background(Color.appSurface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 }
 
 // MARK: - Walks Tab
-
 private struct WalksAdminTab: View {
     let walks: [Walk]
     let profiles: [Profile]
@@ -336,23 +235,9 @@ private struct WalksAdminTab: View {
     var body: some View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 10) {
-                HStack {
-                    Text("\(walks.count) WALKS")
-                        .font(.system(size: 11, weight: .black))
-                        .foregroundStyle(Color.appTextSecondary)
-                        .tracking(0.8)
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 4)
-
                 ForEach(walks) { walk in
-                    AdminWalkRow(
-                        walk: walk,
-                        walkerName: walkerName(for: walk.userId),
-                        onRefresh: onRefresh
-                    )
-                    .padding(.horizontal, 16)
+                    AdminWalkRow(walk: walk, walkerName: walkerName(for: walk.userId), onRefresh: onRefresh)
+                        .padding(.horizontal, 16)
                 }
             }
             .padding(.vertical, 12)
@@ -375,26 +260,18 @@ private struct AdminWalkRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(walk.title ?? "Prayer Walk")
-                    .font(.system(size: 13, weight: .bold))
-                    .foregroundStyle(Color.appTextPrimary)
-                    .lineLimit(1)
+                    .font(.system(size: 13, weight: .bold)).foregroundStyle(Color.appTextPrimary).lineLimit(1)
                 Text("\(walkerName) • \(formatDistance(walk.distance))")
-                    .font(.system(size: 12))
-                    .foregroundStyle(Color.appTextSecondary)
+                    .font(.system(size: 12)).foregroundStyle(Color.appTextSecondary)
             }
-
             Spacer()
-
-            Button(role: .destructive) {
-                confirmDelete = true
-            } label: {
+            Button(role: .destructive) { confirmDelete = true } label: {
                 Image(systemName: "trash.fill")
                     .font(.system(size: 16))
                     .foregroundStyle(Color.appError.opacity(0.7))
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.horizontal, 14).padding(.vertical, 12)
         .background(Color.appSurface)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .confirmationDialog("Delete this walk?", isPresented: $confirmDelete, titleVisibility: .visible) {
