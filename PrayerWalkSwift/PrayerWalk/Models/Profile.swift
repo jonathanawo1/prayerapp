@@ -10,6 +10,7 @@ struct Profile: Codable, Identifiable {
     var groupId: String?
     let createdAt: String?
     let updatedAt: String?
+    var isAdmin: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -18,7 +19,10 @@ struct Profile: Codable, Identifiable {
         case groupId = "group_id"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
+        case isAdmin = "is_admin"
     }
+
+    var admin: Bool { isAdmin == true }
 }
 
 struct ProfileUpsert: Encodable {

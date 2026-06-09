@@ -2,6 +2,7 @@
 // PrayerWalk
 
 import SwiftUI
+import PhotosUI
 
 struct ProfileView: View {
     @EnvironmentObject var authVM: AuthViewModel
@@ -11,6 +12,7 @@ struct ProfileView: View {
 
     @State private var isEditingName = false
     @State private var editedName = ""
+    @State private var selectedPhotoItem: PhotosPickerItem?
 
     private var userWalks: [Walk] { walksVM.walks.filter { $0.userId == authVM.userId } }
     private var totalDistance: Double { userWalks.reduce(0) { $0 + $1.distance } }
@@ -37,18 +39,45 @@ struct ProfileView: View {
 
                             VStack(spacing: 14) {
                                 // Avatar
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.routeColor(for: authVM.userId))
-                                        .frame(width: 88, height: 88)
-                                    Text(initials)
-                                        .font(.system(size: 32, weight: .black))
-                                        .foregroundStyle(.white)
+                                PhotosPicker(selection: $selectedPhotoItem, matching: .images) {
+                                    ZStack {
+                                        if let avatarUrl = profileVM.profile?.avatarUrl, let url = URL(string: avatarUrl) {
+                                            AsyncImage(url: url) { phase in
+                                                if case .success(let img) = phase {
+                                                    img.resizable().scaledToFill()
+                                                        .frame(width: 88, height: 88)
+                                                        .clipShape(Circle())
+                                                } else {
+                                                    avatarFallback
+                                                }
+                                            }
+                                        } else {
+                                            avatarFallback
+                                        }
+                                        // Camera overlay badge
+                                        Circle()
+                                            .fill(Color.appPrimary)
+                                            .frame(width: 26, height: 26)
+                                            .overlay(
+                                                Image(systemName: "camera.fill")
+                                                    .font(.system(size: 11))
+                                                    .foregroundStyle(.white)
+                                            )
+                                            .offset(x: 28, y: 28)
+                                    }
                                 }
-                                .overlay(
-                                    Circle()
-                                        .strokeBorder(Color.white.opacity(0.15), lineWidth: 2)
-                                )
+                                .onChange(of: selectedPhotoItem) { item in
+                                    Task {
+                                        if let data = try? await item?.loadTransferable(type: Data.self),
+                                           let img = UIImage(data: data),
+                                           let jpeg = img.jpegData(compressionQuality: 0.8) {
+                                            let url = try? await SupabaseService.shared.uploadProfilePhoto(imageData: jpeg, userId: authVM.userId)
+                                            if let url {
+                                                await profileVM.updateAvatarUrl(url, userId: authVM.userId)
+                                            }
+                                        }
+                                    }
+                                }
                                 .shadow(color: Color.appPrimary.opacity(0.3), radius: 20, x: 0, y: 8)
 
                                 // Name

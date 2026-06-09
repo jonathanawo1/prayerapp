@@ -14,13 +14,6 @@ struct HomeShellView: View {
     @State private var showActiveWalk: Bool = false
     @State private var fabPressed = false
 
-    // When in a branch, filter map to only that branch's walks
-    private var branchWalks: [Walk] {
-        guard groupVM.group != nil, !groupVM.members.isEmpty else { return walksVM.walks }
-        let memberIds = Set(groupVM.members.map(\.id))
-        return walksVM.walks.filter { memberIds.contains($0.userId) }
-    }
-
     var body: some View {
         ZStack(alignment: .bottom) {
             TabView(selection: $selectedTab) {
@@ -30,7 +23,7 @@ struct HomeShellView: View {
                     }
                     .tag(0)
 
-                CommunityMapView(walks: branchWalks)
+                CommunityMapView(walks: walksVM.walks)
                     .tabItem {
                         Label("Map", systemImage: selectedTab == 1 ? "map.fill" : "map")
                     }
@@ -47,6 +40,14 @@ struct HomeShellView: View {
                         Label("You", systemImage: selectedTab == 3 ? "person.crop.circle.fill" : "person.crop.circle")
                     }
                     .tag(3)
+
+                if profileVM.profile?.admin == true || authVM.email.lowercased().hasPrefix("admin@baask") {
+                    AdminView()
+                        .tabItem {
+                            Label("Admin", systemImage: "shield.fill")
+                        }
+                        .tag(4)
+                }
             }
             .tint(.appPrimary)
             .preferredColorScheme(.dark)
@@ -87,11 +88,13 @@ struct HomeShellView: View {
         .onAppear {
             configureAppearances()
             Task {
-                await walksVM.fetchWalks()
                 await profileVM.ensureProfile(userId: authVM.userId, email: authVM.email)
                 if let groupId = profileVM.profile?.groupId {
+                    await walksVM.fetchWalksForGroup(groupId: groupId)
                     await groupVM.fetchGroup(id: groupId)
                     await groupVM.fetchMembers()
+                } else {
+                    await walksVM.fetchWalks()
                 }
             }
         }

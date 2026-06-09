@@ -169,6 +169,11 @@ final class SupabaseService: ObservableObject {
     private func validateResponse(_ response: URLResponse, data: Data) throws {
         guard let http = response as? HTTPURLResponse else { return }
         guard (200..<300).contains(http.statusCode) else {
+            if http.statusCode == 401 {
+                clearSession()
+                NotificationCenter.default.post(name: NSNotification.Name("pw_session_expired"), object: nil)
+                throw AppError.notAuthenticated
+            }
             let body = String(data: data, encoding: .utf8) ?? "<binary>"
             let errMsg = (try? decoder.decode(SupabaseError.self, from: data))?.localizedMessage ?? "HTTP \(http.statusCode)"
             print("[SupabaseService] HTTP \(http.statusCode) — \(body)")
@@ -310,6 +315,59 @@ final class SupabaseService: ObservableObject {
             URLQueryItem(name: "limit", value: "1")
         ])
         return groups.first
+    }
+
+    // MARK: - Admin
+
+    func fetchAllProfiles() async throws -> [Profile] {
+        try await fetch([Profile].self, path: "profiles", queryItems: [
+            URLQueryItem(name: "order", value: "created_at.asc")
+        ])
+    }
+
+    func setProfileAdmin(userId: String, isAdmin: Bool) async throws -> Profile {
+        struct AdminUpdate: Encodable {
+            let isAdmin: Bool
+            enum CodingKeys: String, CodingKey { case isAdmin = "is_admin" }
+        }
+        return try await patch(AdminUpdate(isAdmin: isAdmin), path: "profiles", queryItems: [
+            URLQueryItem(name: "id", value: "eq.\(userId)")
+        ])
+    }
+
+    func deleteWalk(id: String) async throws {
+        let req = try authedRequest(method: "DELETE", path: "walks", queryItems: [
+            URLQueryItem(name: "id", value: "eq.\(id)")
+        ])
+        let (data, response) = try await session.data(for: req)
+        try validateResponse(response, data: data)
+    }
+
+    // MARK: - Group walks
+
+    func walksFetchByGroup(groupId: String) async throws -> [Walk] {
+        try await fetch([Walk].self, path: "walks", queryItems: [
+            URLQueryItem(name: "group_id", value: "eq.\(groupId)"),
+            URLQueryItem(name: "order", value: "created_at.desc")
+        ])
+    }
+
+    // MARK: - Profile photo
+
+    func uploadProfilePhoto(imageData: Data, userId: String) async throws -> String {
+        guard let token = accessToken else { throw AppError.notAuthenticated }
+        let fileName = "avatars/\(userId).jpg"
+        let url = URL(string: "\(supabaseURL)/storage/v1/object/walk-photos/\(fileName)")!
+        var req = URLRequest(url: url)
+        req.httpMethod = "POST"
+        req.setValue(anonKey, forHTTPHeaderField: "apikey")
+        req.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        req.setValue("image/jpeg", forHTTPHeaderField: "Content-Type")
+        req.setValue("upsert=true", forHTTPHeaderField: "x-upsert")
+        req.httpBody = imageData
+        let (data, response) = try await session.data(for: req)
+        try validateResponse(response, data: data)
+        return "\(supabaseURL)/storage/v1/object/public/walk-photos/\(fileName)"
     }
 }
 

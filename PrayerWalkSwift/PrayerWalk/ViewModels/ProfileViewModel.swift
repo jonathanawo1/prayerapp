@@ -50,6 +50,22 @@ final class ProfileViewModel: ObservableObject {
         }
     }
 
+    func updateAvatarUrl(_ url: String, userId: String) async {
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let upsert = ProfileUpsert(
+                id: userId,
+                displayName: profile?.displayName ?? "Walker",
+                avatarUrl: url,
+                groupId: profile?.groupId
+            )
+            profile = try await supabase.profileUpsert(upsert)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
     func ensureProfile(userId: String, email: String) async {
         if profile != nil { return }
         do {
